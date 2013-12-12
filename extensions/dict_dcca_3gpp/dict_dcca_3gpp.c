@@ -156,6 +156,12 @@ static int dict_dcca_3gpp_entry(char * conffile)
                         CHECK_FCT(fd_dict_new(fd_g_config->cnf_dict, DICT_VENDOR, &vendor_data, NULL, NULL));
                 }
 
+                {
+                        struct dict_object * vendor;
+                        CHECK_FCT(fd_dict_search(fd_g_config->cnf_dict, DICT_VENDOR, VENDOR_BY_NAME, "3GPP", &vendor, ENOENT));
+                        struct dict_application_data app_data = { 16777216, "Cx" };
+                        CHECK_FCT(fd_dict_new(fd_g_config->cnf_dict, DICT_APPLICATION, &app_data, vendor, NULL));
+                }
 	}
 	
 
@@ -10831,6 +10837,9 @@ static int dict_dcca_3gpp_entry(char * conffile)
 	}
 	/* Command section */
 	{
+                struct dict_object* app;
+                CHECK_FCT(fd_dict_search(fd_g_config->cnf_dict, DICT_APPLICATION, APPLICATION_BY_NAME, "Cx", &app, ENOENT));
+
 		/* User-Authorization-Request (UAR) Command */
 		{
 			struct dict_object* cmd_uar;
@@ -10859,7 +10868,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 							{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 }
 						};
 
-			CHECK_dict_new(DICT_COMMAND, &data, NULL, &cmd_uar);
+			CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_uar);
 			PARSE_loc_rules(rules, cmd_uar);
 		}
 
@@ -10890,7 +10899,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 							{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 }
 						};
 
-			CHECK_dict_new(DICT_COMMAND, &data, NULL, &cmd_uaa);
+			CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_uaa);
 			PARSE_loc_rules(rules, cmd_uaa);
 		}
 
@@ -10922,7 +10931,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 							{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 }
 						};
 
-			CHECK_dict_new(DICT_COMMAND, &data, NULL, &cmd_lir);
+			CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_lir);
 			PARSE_loc_rules(rules, cmd_lir);
 		}
 
@@ -10955,7 +10964,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 							{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 }
 						};
 
-			CHECK_dict_new(DICT_COMMAND, &data, NULL, &cmd_lia);
+			CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_lia);
 			PARSE_loc_rules(rules, cmd_lia);
 		}
 
@@ -10988,7 +10997,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 							{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 },
 						};
 
-			CHECK_dict_new(DICT_COMMAND, &data, NULL, &cmd_mar);
+			CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_mar);
 			PARSE_loc_rules(rules, cmd_mar);
 		}
 
@@ -11021,7 +11030,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 							{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 }
 						};
 
-			CHECK_dict_new(DICT_COMMAND, &data, NULL, &cmd_maa);
+			CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_maa);
 			PARSE_loc_rules(rules, cmd_maa);
 		}
 
@@ -11057,7 +11066,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
   					  ,{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 }
   				  };
 
-      CHECK_dict_new(DICT_COMMAND, &data, NULL, &cmd_sar);
+      CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_sar);
   	  PARSE_loc_rules(rules, cmd_sar);
   	}
 
@@ -11095,7 +11104,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
   					  ,{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 }
   				  };
 
-      CHECK_dict_new(DICT_COMMAND, &data, NULL, &cmd_saa);
+      CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_saa);
   	  PARSE_loc_rules(rules, cmd_saa);
   	}
 	}
