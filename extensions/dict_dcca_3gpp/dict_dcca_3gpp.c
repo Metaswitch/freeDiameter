@@ -11034,79 +11034,81 @@ static int dict_dcca_3gpp_entry(char * conffile)
 			PARSE_loc_rules(rules, cmd_maa);
 		}
 
-  	/* Server-Assignment-Request (SAR) Command */
-  	{
-      struct dict_object* cmd_sar;
-  	  struct dict_cmd_data data = {
-                 301,                                                    /* Code */
-  				       "3GPP/Server-Assignment-Request",                       /* Name */
-  				       CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
-  				       CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE                   /* Fixed flag values */
-  				      };
+		/* Server-Assignment-Request (SAR) Command */
+		{
+			struct dict_object* cmd_sar;
+			struct dict_cmd_data data = {
+							301,                                                    /* Code */
+							"3GPP/Server-Assignment-Request",                       /* Name */
+							CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
+							CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE                   /* Fixed flag values */
+						    };
 
-  	  struct local_rules_definition rules[] =
-  				  {  {  {                      .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 }
-  					  ,{  {                      .avp_name = "Vendor-Specific-Application-Id" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  {                      .avp_name = "Auth-Session-State" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  {                      .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  {                      .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  {                      .avp_name = "Destination-Host" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  {                      .avp_name = "Destination-Realm" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  {                      .avp_name = "User-Name" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Supported-Features" }, RULE_OPTIONAL, -1, -1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Public-Identity" }, RULE_OPTIONAL, -1, -1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Wildcarded-Public-Identity" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Server-Name" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Server-Assignment-Type" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "User-Data-Already-Available" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "SCSCF-Restoration-Info" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Multiple-Registration-Indication" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Session-Priority" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  {                      .avp_name = "Proxy-Info" }, RULE_OPTIONAL, -1, -1 }
-  					  ,{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 }
-  				  };
+			struct local_rules_definition rules[] =
+						{
+							{  {                      .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 },
+							{  {                      .avp_name = "Vendor-Specific-Application-Id" }, RULE_REQUIRED, -1, 1 },
+							{  {                      .avp_name = "Auth-Session-State" }, RULE_REQUIRED, -1, 1 },
+							{  {                      .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 },
+							{  {                      .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1 },
+							{  {                      .avp_name = "Destination-Host" }, RULE_OPTIONAL, -1, 1 },
+							{  {                      .avp_name = "Destination-Realm" }, RULE_REQUIRED, -1, 1 },
+							{  {                      .avp_name = "User-Name" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Supported-Features" }, RULE_OPTIONAL, -1, -1 },
+							{  { .avp_vendor = 10415, .avp_name = "Public-Identity" }, RULE_OPTIONAL, -1, -1 },
+							{  { .avp_vendor = 10415, .avp_name = "Wildcarded-Public-Identity" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Server-Name" }, RULE_REQUIRED, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Server-Assignment-Type" }, RULE_REQUIRED, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "User-Data-Already-Available" }, RULE_REQUIRED, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "SCSCF-Restoration-Info" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Multiple-Registration-Indication" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Session-Priority" }, RULE_OPTIONAL, -1, 1 },
+							{  {                      .avp_name = "Proxy-Info" }, RULE_OPTIONAL, -1, -1 },
+							{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 }
+						};
+	
+			CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_sar);
+			PARSE_loc_rules(rules, cmd_sar);
+		}
 
-      CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_sar);
-  	  PARSE_loc_rules(rules, cmd_sar);
-  	}
+		/* Server-Assignment-Answer (SAA) Command */
+		{
+			struct dict_object* cmd_saa;
+			struct dict_cmd_data data = {
+							301,                                                    /* Code */
+							"3GPP/Server-Assignment-Answer",                        /* Name */
+							CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
+							CMD_FLAG_PROXIABLE                                      /* Fixed flag values */
+						    };
 
-  	/* Server-Assignment-Answer (SAA) Command */
-  	{
-      struct dict_object* cmd_saa;
-  	  struct dict_cmd_data data = {
-                 301,                                                    /* Code */
-  				       "3GPP/Server-Assignment-Answer",                        /* Name */
-  				       CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
-  				       CMD_FLAG_PROXIABLE                                      /* Fixed flag values */
-  				      };
+			struct local_rules_definition rules[] =
+						{
+							{  {                      .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 },
+							{  {                      .avp_name = "Vendor-Specific-Application-Id" }, RULE_REQUIRED, -1, 1 },
+							{  {                      .avp_name = "Result-Code" }, RULE_OPTIONAL, -1, 1 },
+							{  {                      .avp_name = "Experimental-Result" }, RULE_OPTIONAL, -1, 1 },
+							{  {                      .avp_name = "Auth-Session-State" }, RULE_REQUIRED, -1, 1 },
+							{  {                      .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 },
+							{  {                      .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1 },
+							{  {                      .avp_name = "User-Name" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Supported-Features" }, RULE_OPTIONAL, -1, -1 },
+							{  { .avp_vendor = 10415, .avp_name = "User-Data" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Charging-Information" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Associated-Identities" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Loose-Route-Indication" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "SCSCF-Restoration-Info" }, RULE_OPTIONAL, -1, -1 },
+							{  { .avp_vendor = 10415, .avp_name = "Associated-Registered-Identities" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Server-Name" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Wildcarded-Public-Identity" }, RULE_OPTIONAL, -1, 1 },
+							{  { .avp_vendor = 10415, .avp_name = "Priviledged-Sender-Indication" }, RULE_OPTIONAL, -1, 1 },
+							{  {                      .avp_name = "Failed-AVP" }, RULE_OPTIONAL, -1, -1 },
+							{  {                      .avp_name = "Proxy-Info" }, RULE_OPTIONAL, -1, -1 },
+							{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 }
+						};
 
-  	  struct local_rules_definition rules[] =
-  				  {  {  {                      .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 }
-  					  ,{  {                      .avp_name = "Vendor-Specific-Application-Id" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  {                      .avp_name = "Result-Code" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  {                      .avp_name = "Experimental-Result" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  {                      .avp_name = "Auth-Session-State" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  {                      .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  {                      .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1 }
-  					  ,{  {                      .avp_name = "User-Name" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Supported-Features" }, RULE_OPTIONAL, -1, -1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "User-Data" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Charging-Information" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Associated-Identities" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Loose-Route-Indication" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "SCSCF-Restoration-Info" }, RULE_OPTIONAL, -1, -1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Associated-Registered-Identities" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Server-Name" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Wildcarded-Public-Identity" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  { .avp_vendor = 10415, .avp_name = "Priviledged-Sender-Indication" }, RULE_OPTIONAL, -1, 1 }
-  					  ,{  {                      .avp_name = "Failed-AVP" }, RULE_OPTIONAL, -1, -1 }
-  					  ,{  {                      .avp_name = "Proxy-Info" }, RULE_OPTIONAL, -1, -1 }
-  					  ,{  {                      .avp_name = "Route-Record" }, RULE_OPTIONAL, -1, -1 }
-  				  };
-
-      CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_saa);
-  	  PARSE_loc_rules(rules, cmd_saa);
-  	}
+			CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_saa);
+			PARSE_loc_rules(rules, cmd_saa);
+		}
 	}
 	LOG_D( "Extension 'Dictionary definitions for DCCA 3GPP' initialized");
 	return 0;
