@@ -11122,7 +11122,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 
       struct local_rules_definition rules[] =
       {
-        {  {                      .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 },
+        {  {                      .avp_name = "Session-Id" }, RULE_REQUIRED, -1, 1 },
         {  {                      .avp_name = "Vendor-Specific-Application-Id" }, RULE_REQUIRED, -1, 1 },
         {  {                      .avp_name = "Auth-Session-State" }, RULE_REQUIRED, -1, 1 },
         {  {                      .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 },
@@ -11185,7 +11185,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 
       struct local_rules_definition rules[] =
       {
-        {  {                      .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 },
+        {  {                      .avp_name = "Session-Id" }, RULE_REQUIRED, -1, 1 },
         {  {                      .avp_name = "Vendor-Specific-Application-Id" }, RULE_REQUIRED, -1, 1 },
         {  {                      .avp_name = "Auth-Session-State" }, RULE_REQUIRED, -1, 1 },
         {  {                      .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 },
