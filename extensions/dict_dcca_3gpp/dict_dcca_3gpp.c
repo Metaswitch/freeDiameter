@@ -11233,6 +11233,71 @@ static int dict_dcca_3gpp_entry(char * conffile)
       CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_ppa);
       PARSE_loc_rules(rules, cmd_ppa);
     }
+
+    /* Accounting-Control-Request (ACR) Command */
+    {
+      struct dict_object* cmd_acr;
+      struct dict_cmd_data data = {
+        271,
+        "3GPP/Accounting-Control-Request",
+        CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR,
+        CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE
+      };
+
+      struct local_rules_definition rules[] = 
+      {
+        { {                       .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1},
+        { {                       .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1},
+        { {                       .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1},
+        { {                       .avp_name = "Destination-Realm" }, RULE_REQUIRED, -1, 1},
+        { {                       .avp_name = "Accounting-Record-Type" }, RULE_REQUIRED, -1, 1},
+        { {                       .avp_name = "Accounting-Record-Number" }, RULE_REQUIRED, -1, 1},
+        { {                       .avp_name = "Acct-Application-Id"}, RULE_REQUIRED, -1, 1},
+        { {                       .avp_name = "User-Name"}, RULE_OPTIONAL, -1, 1},
+        { {                       .avp_name = "Destination-Host"}, RULE_OPTIONAL, -1, 1},
+        { {                       .avp_name = "Acct-Interim-Interval"}, RULE_OPTIONAL, -1, 1},
+        { {                       .avp_name = "Origin-State-Id"}, RULE_OPTIONAL, -1, 1},
+        { {                       .avp_name = "Event-Timestamp"}, RULE_OPTIONAL, -1, 1},
+        { {                       .avp_name = "Proxy-Info"}, RULE_OPTIONAL, -1, -1},
+        { {                       .avp_name = "Route-Record"}, RULE_OPTIONAL, -1, -1},
+        { {                       .avp_name = "Service-Context-Id" }, RULE_REQUIRED, -1, -1},
+        { {                       .avp_name = "Service-Information" }, RULE_REQUIRED, -1, -1},
+      };
+
+      CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_acr);
+      PARSE_loc_rules(rules, cmd_acr);
+    }
+
+    /* Accounting-Control-Answer (ACA) Command */
+    {
+      struct dict_object* cmd_aca;
+      struct dict_cmd_data data = {
+        271,
+        "3GPP/Accounting-Control-Answer",
+        CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR,
+        CMD_FLAG_PROXIABLE
+      };
+
+      struct local_rules_definition rules[] = 
+      {
+        { {                       .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1},
+        { {                       .avp_name = "Result-Code" }, RULE_REQUIRED, -1, 1},
+        { {                       .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1},
+        { {                       .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1},
+        { {                       .avp_name = "Accounting-Record-Type" }, RULE_REQUIRED, -1, 1},
+        { {                       .avp_name = "Accounting-Record-Number" }, RULE_REQUIRED, -1, 1},
+        { {                       .avp_name = "Acct-Application-Id"}, RULE_OPTIONAL, -1, 1},
+        { {                       .avp_name = "User-Name"}, RULE_OPTIONAL, -1, 1},
+        { {                       .avp_name = "Error-Reporting-Host"}, RULE_OPTIONAL, -1, 1},
+        { {                       .avp_name = "Acct-Interim-Interval"}, RULE_OPTIONAL, -1, 1},
+        { {                       .avp_name = "Origin-State-Id"}, RULE_OPTIONAL, -1, 1},
+        { {                       .avp_name = "Event-Timestamp"}, RULE_OPTIONAL, -1, 1},
+        { {                       .avp_name = "Proxy-Info"}, RULE_OPTIONAL, -1, -1},
+      };
+
+      CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_aca);
+      PARSE_loc_rules(rules, cmd_aca);
+    }
   }
   LOG_D( "Extension 'Dictionary definitions for DCCA 3GPP' initialized");
   return 0;
