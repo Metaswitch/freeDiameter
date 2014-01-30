@@ -185,6 +185,7 @@ static void * exp_fct(void * arg)
 	do {
 		struct timespec	now;
 		struct session * first;
+		struct timespec first_timeout;
 		
 		CHECK_POSIX_DO( pthread_mutex_lock(&exp_lock),  break );
 		pthread_cleanup_push( fd_cleanup_mutex, &exp_lock );
@@ -206,8 +207,9 @@ again:
 
 		/* If first session is not expired, we just wait until it happens */
 		if ( TS_IS_INFERIOR( &now, &first->timeout ) ) {
-			
-			CHECK_POSIX_DO2(  pthread_cond_timedwait( &exp_cond, &exp_lock, &first->timeout ),  
+			/* The first session can be deleted under our feet, so take a copy of its timeout before calling pthread_cond_timedwait */
+			first_timeout = first->timeout;
+			CHECK_POSIX_DO2(  pthread_cond_timedwait( &exp_cond, &exp_lock, &first_timeout ),  
 					ETIMEDOUT, /* ETIMEDOUT is a normal error, continue */,
 					/* on other error, */ break );
 	
