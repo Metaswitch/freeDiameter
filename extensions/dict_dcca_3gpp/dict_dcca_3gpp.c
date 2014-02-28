@@ -11261,7 +11261,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
         { {                       .avp_name = "Proxy-Info"}, RULE_OPTIONAL, -1, -1},
         { {                       .avp_name = "Route-Record"}, RULE_OPTIONAL, -1, -1},
         { {                       .avp_name = "Service-Context-Id" }, RULE_REQUIRED, -1, -1},
-        { { .avp_vendor = 10415,  .avp_name = "Service-Information" }, RULE_REQUIRED, -1, -1},
+        { {                       .avp_name = "Service-Information" }, RULE_REQUIRED, -1, -1},
       };
 
       CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_acr);

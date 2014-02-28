@@ -492,6 +492,24 @@ static int deap_entry(char * conffile)
 			PARSE_loc_rules( rules, cmd );
 		}
 		
+		/* Accounting-Request */
+		{
+			/*
+				Add additional rules of the ABNF (compared to Base definition):
+
+				Attribute Name                         | ACR | ACA |
+				---------------------------------------|-----+-----+
+				Accounting-EAP-Auth-Method             |  0+ |  0  |
+			*/
+			struct dict_object * cmd;
+			struct local_rules_definition rules[] = 
+						{ 	 {  "Accounting-EAP-Auth-Method",	RULE_OPTIONAL,   -1,-1 }
+						};
+			
+			CHECK_dict_search( DICT_COMMAND, CMD_BY_NAME, "Accounting-Request", &cmd);
+			PARSE_loc_rules( rules, cmd );
+		}
+		
 	}
 	
 	LOG_D( "Extension 'Dictionary definitions for EAP' initialized");
