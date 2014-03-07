@@ -6710,6 +6710,32 @@ static int dict_dcca_3gpp_entry(char * conffile)
 		CHECK_dict_new(DICT_AVP, &data, type, NULL);
 	};
 
+	/* Route-Header-Received */
+	{
+		struct dict_avp_data data = {
+			3403,	/* Code */
+			10415,	/* Vendor */
+			"Route-Header-Received",	/* Name */
+			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
+			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
+			AVP_TYPE_OCTETSTRING	/* base type of data */
+		};
+		CHECK_dict_new(DICT_AVP, &data, UTF8String_type, NULL);
+	};
+
+	/* Route-Header-Transmitted */
+	{
+		struct dict_avp_data data = {
+			3404,	/* Code */
+			10415,	/* Vendor */
+			"Route-Header-Transmitted",	/* Name */
+			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
+			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
+			AVP_TYPE_OCTETSTRING	/* base type of data */
+		};
+		CHECK_dict_new(DICT_AVP, &data, UTF8String_type, NULL);
+	};
+
 	/* SDP-Answer-Timestamp */
 	{
 		struct dict_avp_data data = {
