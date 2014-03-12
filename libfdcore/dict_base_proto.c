@@ -2516,6 +2516,8 @@ int fd_dict_base_protocol(struct dictionary * dict)
 		/* To avoid defining global variables for all the AVP that we use here, we do search the dictionary in each sub-block.
 		 * This is far from optimal, but the code is clearer like this, and the time it requires at execution is not noticeable.
 		 */
+    struct dict_object* app;
+    CHECK_FCT(fd_dict_search(fd_g_config->cnf_dict, DICT_APPLICATION, APPLICATION_BY_NAME, "Diameter Base Accounting", &app, ENOENT));
 		
 		/* Generic message syntax when the 'E' bit is set */
 		{
@@ -3257,7 +3259,7 @@ int fd_dict_base_protocol(struct dictionary * dict)
 							,{  "Route-Record",			RULE_OPTIONAL,   -1,-1 }
 						};
 			
-			CHECK_dict_new( DICT_COMMAND, &data , NULL, &cmd);
+			CHECK_dict_new( DICT_COMMAND, &data , app, &cmd);
 			PARSE_loc_rules( rules, cmd );
 		}
 		
@@ -3338,7 +3340,7 @@ int fd_dict_base_protocol(struct dictionary * dict)
 							,{  "Proxy-Info",			RULE_OPTIONAL,   -1,-1 }
 						};
 			
-			CHECK_dict_new( DICT_COMMAND, &data , NULL, &cmd);
+			CHECK_dict_new( DICT_COMMAND, &data , app, &cmd);
 			PARSE_loc_rules( rules, cmd );
 		}
 	}
