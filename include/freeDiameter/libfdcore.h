@@ -366,6 +366,21 @@ extern pthread_rwlock_t fd_g_peers_rw; /* protect the list */
 int fd_peer_add ( struct peer_info * info, const char * orig_dbg, void (*cb)(struct peer_info *, void *), void * cb_data );
 
 /*
+ * FUNCTION:	fd_peer_remove
+ *
+ * PARAMETERS:
+ *  info 	: Information to remove the peer.
+ *
+ * DESCRIPTION:
+ *  Remove a peer from the list of peers to which the daemon must maintain a connexion.
+ *
+ * RETURN VALUE:
+ *  0      	: The peer is removed.
+ *  !0    	: An error occurred.
+ */
+int fd_peer_remove ( struct peer_info * info );
+
+/*
  * FUNCTION:	fd_peer_getbyid
  *
  * PARAMETERS:

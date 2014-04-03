@@ -180,6 +180,35 @@ int fd_peer_add ( struct peer_info * info, const char * orig_dbg, void (*cb)(str
 	return ret;
 }
 
+// Remove a peer entry.
+int fd_peer_remove ( DiamId_t pi_diamid, size_t pi_diamidlen )
+{
+  struct fd_list * li, *li_inf;
+
+  // Find the peer in the peer list from its pi_diamid.
+  CHECK_POSIX( pthread_rwlock_wrlock(&fd_g_peers_rw) );
+  li_inf = &fd_g_peers;
+  for (li = fd_g_peers.next; li != &fd_g_peers; li = li->next) {
+    struct fd_peer * next = (struct fd_peer *)li;
+    int cont;
+    int cmp = fd_os_almostcasesrch( pi_diamid, pi_diamidlen,
+                                    next->p_hdr.info.pi_diamid, next->p_hdr.info.pi_diamidlen,
+                                    &cont );
+    if (cmp > 0)
+      li_inf = li; /* it will come after this element, for sure */
+
+    if (cmp == 0) {
+      fd_list_unlink(&next->p_actives);
+      CHECK_FCT_DO( fd_event_send(next->p_events, FDEVP_TERMINATE, 0, NULL), break );
+      break;
+    }
+    if (!cont)
+      break;
+  }
+
+  return 0;
+}
+
 /* Search for a peer */
 int fd_peer_getbyid( DiamId_t diamid, size_t diamidlen, int igncase, struct peer_hdr ** peer )
 {
