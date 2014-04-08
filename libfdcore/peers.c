@@ -191,9 +191,7 @@ int fd_peer_remove ( DiamId_t pi_diamid, size_t pi_diamidlen )
   for (li = fd_g_peers.next; li != &fd_g_peers; li = li->next) {
     struct fd_peer * next = (struct fd_peer *)li;
     int cont;
-    int cmp = fd_os_almostcasesrch( pi_diamid, pi_diamidlen,
-                                    next->p_hdr.info.pi_diamid, next->p_hdr.info.pi_diamidlen,
-                                    &cont );
+    int cmp = fd_os_cmp( diamid, diamidlen, next->p_hdr.info.pi_diamid, next->p_hdr.info.pi_diamidlen );
     if (cmp > 0)
       li_inf = li; /* it will come after this element, for sure */
 

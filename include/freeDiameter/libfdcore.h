@@ -369,16 +369,17 @@ int fd_peer_add ( struct peer_info * info, const char * orig_dbg, void (*cb)(str
  * FUNCTION:	fd_peer_remove
  *
  * PARAMETERS:
- *  info 	: Information to remove the peer.
+ *  diamid 	: an UTF8 string describing the diameter Id of the peer to seek
+ *  diamidlen	: length of the diamid
  *
  * DESCRIPTION:
- *  Remove a peer from the list of peers to which the daemon must maintain a connexion.
+ *  Remove a peer from the list of peers to which the daemon must maintain a connection.
  *
  * RETURN VALUE:
  *  0      	: The peer is removed.
  *  !0    	: An error occurred.
  */
-int fd_peer_remove ( struct peer_info * info );
+int fd_peer_remove ( DiamId_t pi_diamid, size_t pi_diamidlen );
 
 /*
  * FUNCTION:	fd_peer_getbyid
