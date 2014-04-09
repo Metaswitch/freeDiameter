@@ -181,7 +181,7 @@ int fd_peer_add ( struct peer_info * info, const char * orig_dbg, void (*cb)(str
 }
 
 // Remove a peer entry.
-int fd_peer_remove ( DiamId_t pi_diamid, size_t pi_diamidlen )
+int fd_peer_remove ( DiamId_t diamid, size_t diamidlen )
 {
   struct fd_list * li, *li_inf;
 

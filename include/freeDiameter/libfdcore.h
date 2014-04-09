@@ -379,7 +379,7 @@ int fd_peer_add ( struct peer_info * info, const char * orig_dbg, void (*cb)(str
  *  0      	: The peer is removed.
  *  !0    	: An error occurred.
  */
-int fd_peer_remove ( DiamId_t pi_diamid, size_t pi_diamidlen );
+int fd_peer_remove ( DiamId_t diamid, size_t diamidlen );
 
 /*
  * FUNCTION:	fd_peer_getbyid
