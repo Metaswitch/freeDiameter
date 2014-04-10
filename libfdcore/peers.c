@@ -361,6 +361,7 @@ int fd_peer_free(struct fd_peer ** ptr)
 	free_null(p->p_hdr.info.config.pic_realm); 
 	free_null(p->p_hdr.info.config.pic_priority); 
 	
+	free_null(p->p_hdr.info.runtime.pir_host);
 	free_null(p->p_hdr.info.runtime.pir_realm);
 	free_null(p->p_hdr.info.runtime.pir_prodname);
 	free_list( &p->p_hdr.info.runtime.pir_apps );
@@ -489,6 +490,7 @@ DECLARE_FD_DUMP_PROTOTYPE(fd_peer_dump, struct peer_hdr * p, int details)
 		
 		CHECK_MALLOC_DO( fd_dump_extend( FD_DUMP_STD_PARAMS, "%s [%s, cnt:%ldsr,%ldpa]", peer->p_hdr.info.pi_diamid, STATE_STR(fd_peer_getstate(peer)), peer->p_sr.cnt, peer->p_reqin_count), return NULL);
 		if (details > 0) {
+			CHECK_MALLOC_DO( fd_dump_extend( FD_DUMP_STD_PARAMS, " hst:%s", peer->p_hdr.info.runtime.pir_host ?: "<unknown>"), return NULL);
 			CHECK_MALLOC_DO( fd_dump_extend( FD_DUMP_STD_PARAMS, " rlm:%s", peer->p_hdr.info.runtime.pir_realm ?: "<unknown>"), return NULL);
 			if (peer->p_hdr.info.runtime.pir_prodname) {
 				CHECK_MALLOC_DO( fd_dump_extend( FD_DUMP_STD_PARAMS, " ['%s' %u]", peer->p_hdr.info.runtime.pir_prodname, peer->p_hdr.info.runtime.pir_firmrev), return NULL);
