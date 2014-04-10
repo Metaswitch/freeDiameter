@@ -81,14 +81,14 @@ void fd_p_ce_clear_cnx(struct fd_peer * peer, struct cnxctx ** cnx_kept)
 }
 
 /* Election: compare the Diameter Ids by lexical order, return true if the election is won */
-static __inline__ int election_result(struct msg *cer)
+static __inline__ int election_result(struct fd_peer * peer, struct msg * cer)
 {
 	/* Default to winning the election.  We only hit this case if the peer's CER is malformed. */
 	int ret = 1;
 
 	/* Find the Origin-Host AVP in the CER */
 	struct avp * avp = NULL;
-	CHECK_FCT( fd_msg_browse( msg, MSG_BRW_FIRST_CHILD, &avp, NULL) );
+	CHECK_FCT( fd_msg_browse( cer, MSG_BRW_FIRST_CHILD, &avp, NULL) );
 	while (avp) {
 		struct avp_hdr * hdr;
 		CHECK_FCT(  fd_msg_avp_hdr( avp, &hdr )  );
@@ -701,7 +701,7 @@ int fd_p_ce_handle_newcnx(struct fd_peer * peer, struct cnxctx * initiator)
 	
 	/* Are we doing an election ? */
 	if (fd_peer_getstate(peer) == STATE_WAITCNXACK_ELEC) {
-		if (election_result(peer->p_cer)) {
+		if (election_result(peer, peer->p_cer)) {
 			/* Close initiator connection */
 			fd_cnx_destroy(initiator);
 
@@ -1095,7 +1095,7 @@ int fd_p_ce_handle_newCER(struct msg ** msg, struct fd_peer * peer, struct cnxct
 			break;
 			
 		case STATE_WAITCEA:
-			if (election_result(*msg)) {
+			if (election_result(peer, *msg)) {
 				
 				/* Close initiator connection (was already set as principal) */
 				LOG_D("%s: Election lost on outgoing connection, closing and answering CEA on incoming connection.", peer->p_hdr.info.pi_diamid);
