@@ -183,26 +183,27 @@ int fd_peer_add ( struct peer_info * info, const char * orig_dbg, void (*cb)(str
 // Remove a peer entry.
 int fd_peer_remove ( DiamId_t diamid, size_t diamidlen )
 {
-  struct fd_list * li, *li_inf;
+  struct fd_list * li;
 
   // Find the peer in the peer list from its pi_diamid.
   CHECK_POSIX( pthread_rwlock_wrlock(&fd_g_peers_rw) );
-  li_inf = &fd_g_peers;
   for (li = fd_g_peers.next; li != &fd_g_peers; li = li->next) {
-    struct fd_peer * next = (struct fd_peer *)li;
+    struct fd_peer * peer = (struct fd_peer *)li;
     int cont;
-    int cmp = fd_os_cmp( diamid, diamidlen, next->p_hdr.info.pi_diamid, next->p_hdr.info.pi_diamidlen );
-    if (cmp > 0)
-      li_inf = li; /* it will come after this element, for sure */
+    int cmp = fd_os_cmp( diamid, diamidlen, peer->p_hdr.info.pi_diamid, peer->p_hdr.info.pi_diamidlen );
 
     if (cmp == 0) {
-      fd_list_unlink(&next->p_actives);
-      CHECK_FCT_DO( fd_event_send(next->p_events, FDEVP_TERMINATE, 0, NULL), break );
+      peer->p_hdr.info.config.pic_flags.exp = PI_EXP_INACTIVE;
+      /* update the p_exp_timer value so that the peer expires now */
+      peer->p_hdr.info.config.pic_lft = 0;
+      CHECK_FCT( fd_p_expi_update(peer) );
       break;
     }
     if (!cont)
       break;
   }
+
+	CHECK_POSIX( pthread_rwlock_unlock(&fd_g_peers_rw) );
 
   return 0;
 }

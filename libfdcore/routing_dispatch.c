@@ -914,10 +914,12 @@ static int msg_rt_out(struct msg * msg)
 		for (li = fd_g_activ_peers.next; li != &fd_g_activ_peers; li = li->next) {
 			struct fd_peer * p = (struct fd_peer *)li->o;
 			CHECK_FCT_DO( ret = fd_rtd_candidate_add(rtd, 
-							p->p_hdr.info.runtime.pir_host, 
-							p->p_hdr.info.runtime.pir_hostlen, 
-							p->p_hdr.info.runtime.pir_realm,
-							p->p_hdr.info.runtime.pir_realmlen), 
+                                               p->p_hdr.info.pi_diamid,
+                                               p->p_hdr.info.pi_diamidlen,
+                                               p->p_hdr.info.runtime.pir_host,
+                                               p->p_hdr.info.runtime.pir_hostlen,
+                                               p->p_hdr.info.runtime.pir_realm,
+                                               p->p_hdr.info.runtime.pir_realmlen),
 				{ CHECK_FCT_DO( pthread_rwlock_unlock(&fd_g_activ_peers_rw), ); return ret; } );
 		}
 		CHECK_FCT( pthread_rwlock_unlock(&fd_g_activ_peers_rw) );
@@ -1003,7 +1005,7 @@ static int msg_rt_out(struct msg * msg)
 			break;
 
 		/* Search for the peer */
-		CHECK_FCT( fd_peer_getbyid( c->diamid, c->diamidlen, 0, (void *)&peer ) );
+		CHECK_FCT( fd_peer_getbyid( c->cfged_diamid, c->cfged_diamidlen, 0, (void *)&peer ) );
 
 		if (fd_peer_getstate(peer) == STATE_OPEN) {
 			/* Send to this one */
