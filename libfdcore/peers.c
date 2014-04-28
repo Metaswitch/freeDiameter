@@ -189,7 +189,6 @@ int fd_peer_remove ( DiamId_t diamid, size_t diamidlen )
   CHECK_POSIX( pthread_rwlock_wrlock(&fd_g_peers_rw) );
   for (li = fd_g_peers.next; li != &fd_g_peers; li = li->next) {
     struct fd_peer * peer = (struct fd_peer *)li;
-    int cont;
     int cmp = fd_os_cmp( diamid, diamidlen, peer->p_hdr.info.pi_diamid, peer->p_hdr.info.pi_diamidlen );
 
     if (cmp == 0) {
@@ -199,8 +198,6 @@ int fd_peer_remove ( DiamId_t diamid, size_t diamidlen )
       CHECK_FCT( fd_p_expi_update(peer) );
       break;
     }
-    if (!cont)
-      break;
   }
 
 	CHECK_POSIX( pthread_rwlock_unlock(&fd_g_peers_rw) );
