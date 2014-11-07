@@ -1085,12 +1085,6 @@ struct fd_hook_data_hdl;
 struct fd_cnx_rcvdata {
 	size_t  length;
 	uint8_t * buffer; /* internal note: the buffer is padded with a struct fd_msg_pmdl, not accounted for in length */
-        
-        char remote_ip[40];
-        unsigned short remote_port;
-
-        char local_ip[40];
-        unsigned short local_port;
 };
 
 /* Function to register a new fd_hook_data_hdl. Should be called by your extension init function.

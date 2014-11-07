@@ -45,6 +45,7 @@ static int do_send(struct msg ** msg, struct cnxctx * cnx, uint32_t * hbh, struc
 	int ret;
 	uint32_t bkp_hbh = 0;
 	struct msg *cpy_for_logs_only;
+	struct fd_cnx_rcvdata msgdata;
 	
 	TRACE_ENTRY("%p %p %p %p", msg, cnx, hbh, peer);
 	
@@ -72,7 +73,9 @@ static int do_send(struct msg ** msg, struct cnxctx * cnx, uint32_t * hbh, struc
 	}
 	
 	/* Log the message */
-	fd_hook_call(HOOK_MESSAGE_SENT, cpy_for_logs_only, peer, NULL, fd_msg_pmdl_get(cpy_for_logs_only));
+        msgdata.length = sz;
+        msgdata.buffer = buf;
+	fd_hook_call(HOOK_MESSAGE_SENT, cpy_for_logs_only, peer, &msgdata, fd_msg_pmdl_get(cpy_for_logs_only));
 	
 	pthread_cleanup_push((void *)fd_msg_free, *msg /* might be NULL, no problem */);
 	
