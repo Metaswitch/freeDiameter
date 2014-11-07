@@ -1085,6 +1085,12 @@ struct fd_hook_data_hdl;
 struct fd_cnx_rcvdata {
 	size_t  length;
 	uint8_t * buffer; /* internal note: the buffer is padded with a struct fd_msg_pmdl, not accounted for in length */
+        
+        char remote_ip[40];
+        unsigned short remote_port;
+
+        char local_ip[40];
+        unsigned short local_port;
 };
 
 /* Function to register a new fd_hook_data_hdl. Should be called by your extension init function.
@@ -1153,6 +1159,8 @@ int fd_hook_register (  uint32_t type_mask,
 /* Remove a hook registration */
 int fd_hook_unregister( struct fd_hook_hdl * handler );
 
+/* Use the following function to retrieve any pmd structure associated with a message */
+struct fd_hook_permsgdata * fd_hook_get_pmd(struct fd_hook_data_hdl *data_hdl, struct msg * msg);
 
 /* Use the following function to retrieve any pmd structure associated with a request matching the current answer. Returns NULL in case of error / no such structure */
 struct fd_hook_permsgdata * fd_hook_get_request_pmd(struct fd_hook_data_hdl *data_hdl, struct msg * answer);

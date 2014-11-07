@@ -234,6 +234,29 @@ static struct fd_hook_permsgdata * get_or_create_pmd(struct fd_msg_pmdl *pmdl, s
 	return ret;
 }
 
+struct fd_hook_permsgdata * fd_hook_get_pmd(struct fd_hook_data_hdl *data_hdl, struct msg * msg)
+{
+	struct fd_msg_pmdl *pmdl;
+	struct fd_hook_permsgdata * ret = NULL;
+	struct fd_list * li;
+	
+	pmdl = fd_msg_pmdl_get(msg);
+	if (!pmdl)
+		return NULL;
+	
+	CHECK_POSIX_DO( pthread_mutex_lock(&pmdl->lock), );
+	/* Search in the list for an item with the same handle. The list is ordered by this handle */
+	for (li=pmdl->sentinel.next; li != &pmdl->sentinel; li = li->next) {
+		struct pmd_list_item * pli = (struct pmd_list_item *) li;
+		if (pli->hdl == data_hdl)
+			ret = &pli->pmd;
+		if (pli->hdl >= data_hdl)
+			break;
+	}
+	CHECK_POSIX_DO( pthread_mutex_unlock(&pmdl->lock), );
+	return ret;
+}
+
 struct fd_hook_permsgdata * fd_hook_get_request_pmd(struct fd_hook_data_hdl *data_hdl, struct msg * answer)
 {
 	struct msg * qry;
