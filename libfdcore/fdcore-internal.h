@@ -345,6 +345,8 @@ struct cnxctx * fd_cnx_cli_connect_sctp(int no_ip6, uint16_t port, struct fd_lis
 int             fd_cnx_start_clear(struct cnxctx * conn, int loop);
 void		fd_cnx_sethostname(struct cnxctx * conn, DiamId_t hn);
 int		fd_cnx_proto_info(struct cnxctx * conn, char * buf, size_t len);
+int fd_cnx_remote_ip_port(struct cnxctx * conn, char * buf, size_t len, unsigned short * port);
+int fd_cnx_local_ip_port(struct cnxctx * conn, char * buf, size_t len, unsigned short * port);
 #define ALGO_HANDSHAKE_DEFAULT	0 /* TLS for TCP, DTLS for SCTP */
 #define ALGO_HANDSHAKE_3436	1 /* For TLS for SCTP also */
 int             fd_cnx_handshake(struct cnxctx * conn, int mode, int algo, char * priority, void * alt_creds);

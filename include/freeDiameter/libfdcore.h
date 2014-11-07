@@ -438,6 +438,9 @@ int fd_peer_get_state(struct peer_hdr *peer);
  */
 int fd_peer_cnx_proto_info(struct peer_hdr *peer, char * buf, size_t len);
 
+int fd_peer_cnx_remote_ip_port(struct peer_hdr *peer, char * buf, size_t len, unsigned short * port);
+int fd_peer_cnx_local_ip_port(struct peer_hdr *peer, char * buf, size_t len, unsigned short * port);
+
 /* 
  * FUNCTION:	fd_peer_get_load_pending
  *

@@ -559,6 +559,49 @@ int fd_cnx_proto_info(struct cnxctx * conn, char * buf, size_t len)
 	return 0;
 }
 
+
+int fd_cnx_remote_ip_port(struct cnxctx * conn, char * buf, size_t len, unsigned short * port)
+{
+  socklen_t socklen;
+  struct sockaddr_storage addr;
+
+  socklen = sizeof(addr);
+  getpeername(conn->cc_socket, (struct sockaddr*)&addr, &socklen);
+
+  // deal with both IPv4 and IPv6:
+  if (addr.ss_family == AF_INET) {
+    struct sockaddr_in *s = (struct sockaddr_in *)&addr;
+    *port = ntohs(s->sin_port);
+    inet_ntop(AF_INET, &s->sin_addr, buf, len);
+  } else { // AF_INET6
+    struct sockaddr_in6 *s = (struct sockaddr_in6 *)&addr;
+    *port = ntohs(s->sin6_port);
+    inet_ntop(AF_INET6, &s->sin6_addr, buf, len);
+  }
+}
+
+
+int fd_cnx_local_ip_port(struct cnxctx * conn, char * buf, size_t len, unsigned short * port)
+{
+  socklen_t socklen;
+  struct sockaddr_storage addr;
+
+  socklen = sizeof(addr);
+  getsockname(conn->cc_socket, (struct sockaddr*)&addr, &socklen);
+
+  // deal with both IPv4 and IPv6:
+  if (addr.ss_family == AF_INET) {
+    struct sockaddr_in *s = (struct sockaddr_in *)&addr;
+    *port = ntohs(s->sin_port);
+    inet_ntop(AF_INET, &s->sin_addr, buf, len);
+  } else { // AF_INET6
+    struct sockaddr_in6 *s = (struct sockaddr_in6 *)&addr;
+    *port = ntohs(s->sin6_port);
+    inet_ntop(AF_INET6, &s->sin6_addr, buf, len);
+  }
+}
+
+
 /* Retrieve a list of all IP addresses of the local system from the kernel, using getifaddrs */
 int fd_cnx_get_local_eps(struct fd_list * list)
 {
