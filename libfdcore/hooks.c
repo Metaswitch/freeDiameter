@@ -244,9 +244,7 @@ struct fd_hook_permsgdata * fd_hook_get_pmd(struct fd_hook_data_hdl *data_hdl, s
 	if (!pmdl)
 		return NULL;
 	
-	CHECK_POSIX_DO( pthread_mutex_lock(&pmdl->lock), );
-        ret = get_or_create_pmd(pmdl, data_hdl);
-	CHECK_POSIX_DO( pthread_mutex_unlock(&pmdl->lock), );
+	ret = get_or_create_pmd(pmdl, data_hdl);
 	return ret;
 }
 
