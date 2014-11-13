@@ -324,6 +324,9 @@ int fd_peer_cnx_proto_info(struct peer_hdr *peer, char * buf, size_t len)
 int fd_peer_cnx_remote_ip_port(struct peer_hdr *peer, char * ip_buf, size_t ip_len, unsigned short * port)
 {
 	struct fd_peer * p = (struct fd_peer *)peer;
+	if (p->p_cnxctx == NULL) {
+		return -1;
+	}
 	return fd_cnx_remote_ip_port(p->p_cnxctx, ip_buf, ip_len, port);
 }
 
@@ -331,6 +334,9 @@ int fd_peer_cnx_remote_ip_port(struct peer_hdr *peer, char * ip_buf, size_t ip_l
 int fd_peer_cnx_local_ip_port(struct peer_hdr *peer, char * ip_buf, size_t ip_len, unsigned short * port)
 {
 	struct fd_peer * p = (struct fd_peer *)peer;
+	if (p->p_cnxctx == NULL) {
+		return -1;
+	}
 	return fd_cnx_local_ip_port(p->p_cnxctx, ip_buf, ip_len, port);
 }
 

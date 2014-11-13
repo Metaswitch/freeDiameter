@@ -594,7 +594,7 @@ int fd_cnx_local_ip_port(struct cnxctx * conn, char * ip_buf, size_t ip_len, uns
 	struct sockaddr_storage addr;
 
 	socklen = sizeof(addr);
-	getsockname(conn->cc_socket, (struct sockaddr*)&addr, &socklen);
+	rc = getsockname(conn->cc_socket, (struct sockaddr*)&addr, &socklen);
 
 	if (rc == 0) {
 		/* Deal with both IPv4 and IPv6 */

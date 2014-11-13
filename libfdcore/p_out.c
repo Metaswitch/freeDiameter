@@ -73,8 +73,8 @@ static int do_send(struct msg ** msg, struct cnxctx * cnx, uint32_t * hbh, struc
 	}
 	
 	/* Log the message */
-        msgdata.length = sz;
-        msgdata.buffer = buf;
+	msgdata.length = sz;
+	msgdata.buffer = buf;
 	fd_hook_call(HOOK_MESSAGE_SENT, cpy_for_logs_only, peer, &msgdata, fd_msg_pmdl_get(cpy_for_logs_only));
 	
 	pthread_cleanup_push((void *)fd_msg_free, *msg /* might be NULL, no problem */);

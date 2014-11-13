@@ -1034,7 +1034,7 @@ enum fd_hook_type {
 		   try to call fd_msg_parse_dict, it will slow down the operation of a relay agent.
 		 - {peer} is set if the message is sent to a peer's connection, and NULL if the message is sent to a new client
 		   connected and not yet identified, or being rejected
-		 - {other} is NULL.
+		 - {other} is a pointer to a fd_cnx_rcvdata structure describing the received message.
 		 - {permsgdata} points to existing structure if any, or a new structure otherwise. 
 		 */
 	
