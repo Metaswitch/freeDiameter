@@ -438,6 +438,46 @@ int fd_peer_get_state(struct peer_hdr *peer);
  */
 int fd_peer_cnx_proto_info(struct peer_hdr *peer, char * buf, size_t len);
 
+/*
+ * FUNCTION:	fd_peer_cnx_remote_ip_port
+ *
+ * PARAMETERS:
+ *  peer	: The peer whose information to be read
+ *  buf		: Where to store the IP address.
+ *  len		: Available space for the IP address.
+ *  port	: Where to store the port.
+ *
+ * DESCRIPTION:
+ *   Returns the remote IP address and port for a given peer. The IP address is
+ *   returned as a NUL terminated string.
+ *
+ * RETURN VALUE:
+ *  0	: data was retrieved successfully.
+ *  -1	: an error occurred.
+ *
+ */
+int fd_peer_cnx_remote_ip_port(struct peer_hdr *peer, char * ip_buf, size_t ip_len, unsigned short * port);
+
+/*
+ * FUNCTION:	fd_peer_cnx_local_ip_port
+ *
+ * PARAMETERS:
+ *  peer	: The peer whose information to be read
+ *  buf		: Where to store the IP address.
+ *  len		: Available space for the IP address.
+ *  port	: Where to store the port.
+ *
+ * DESCRIPTION:
+ *   Returns the local IP address and port used to connect to a given peer. The
+ *   IP address is returned as a NUL terminated string.
+ *
+ * RETURN VALUE:
+ *  0	: data was retrieved successfully.
+ *  -1	: an error occurred.
+ *
+ */
+int fd_peer_cnx_local_ip_port(struct peer_hdr *peer, char * ip_buf, size_t ip_len, unsigned short * port);
+
 /* 
  * FUNCTION:	fd_peer_get_load_pending
  *
@@ -975,7 +1015,7 @@ enum fd_hook_type {
 		   try to call fd_msg_parse_dict, it will slow down the operation of a relay agent.
 		 - {peer} is set if the message is received from a peer's connection, and NULL if the message is from a new client
 		   connected and not yet identified
-		 - {other} is NULL, or a char * identifying the connection when {peer} is null.
+		 - {other} is a pointer to a fd_cnx_rcvdata structure describing the received message.
 		 - {permsgdata} points to either a new empty structure allocated for this message or the one passed to HOOK_DATA_RECEIVED if used.
 		 */
 	
@@ -994,7 +1034,7 @@ enum fd_hook_type {
 		   try to call fd_msg_parse_dict, it will slow down the operation of a relay agent.
 		 - {peer} is set if the message is sent to a peer's connection, and NULL if the message is sent to a new client
 		   connected and not yet identified, or being rejected
-		 - {other} is NULL.
+		 - {other} is a pointer to a fd_cnx_rcvdata structure describing the received message.
 		 - {permsgdata} points to existing structure if any, or a new structure otherwise. 
 		 */
 	
@@ -1153,6 +1193,8 @@ int fd_hook_register (  uint32_t type_mask,
 /* Remove a hook registration */
 int fd_hook_unregister( struct fd_hook_hdl * handler );
 
+/* Use the following function to retrieve any pmd structure associated with a message */
+struct fd_hook_permsgdata * fd_hook_get_pmd(struct fd_hook_data_hdl *data_hdl, struct msg * msg);
 
 /* Use the following function to retrieve any pmd structure associated with a request matching the current answer. Returns NULL in case of error / no such structure */
 struct fd_hook_permsgdata * fd_hook_get_request_pmd(struct fd_hook_data_hdl *data_hdl, struct msg * answer);

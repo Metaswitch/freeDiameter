@@ -529,7 +529,7 @@ psm_loop:
 		}
 		
 		/* Log incoming message */
-		fd_hook_call(HOOK_MESSAGE_RECEIVED, msg, peer, NULL, fd_msg_pmdl_get(msg));
+		fd_hook_call(HOOK_MESSAGE_RECEIVED, msg, peer, &rcv_data, fd_msg_pmdl_get(msg));
 		
 		if (cur_state == STATE_OPEN_NEW) {
 			/* OK, we have received something, so the connection is supposedly now in OPEN state at the remote site */

@@ -216,7 +216,7 @@ next_client:
 	
 	/* Log incoming message */
 	fd_hook_associate(msg, pmdl);
-	fd_hook_call(HOOK_MESSAGE_RECEIVED, msg, NULL, fd_cnx_getid(c), fd_msg_pmdl_get(msg));
+	fd_hook_call(HOOK_MESSAGE_RECEIVED, msg, NULL, &rcv_data, fd_msg_pmdl_get(msg));
 	
 	/* We expect a CER, it must parse with our dictionary and rules */
 	CHECK_FCT_DO( fd_msg_parse_rules( msg, fd_g_config->cnf_dict, &pei ), 
