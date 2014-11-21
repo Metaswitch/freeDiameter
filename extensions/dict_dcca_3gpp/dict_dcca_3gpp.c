@@ -29,7 +29,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                                                             *
  *********************************************************************************************************/
 
-/* 
+/*
  * Dictionary definitions for objects specified for DCCA by 3GPP.
  *
  * This extensions contains a lot of AVPs from various 3GPP standards
@@ -145,7 +145,7 @@ struct local_rules_definition {
 static int dict_dcca_3gpp_entry(char * conffile)
 {
 	/* Applications section */
-	{		
+	{
                 /* Create the vendors */
                 {
                         struct dict_vendor_data vendor_data = { 10415, "3GPP" };
@@ -163,7 +163,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
                         CHECK_FCT(fd_dict_new(fd_g_config->cnf_dict, DICT_APPLICATION, &app_data, vendor, NULL));
                 }
 	}
-	
+
 
 	struct dict_object * Address_type;
 	struct dict_object * DiameterIdentity_type;
@@ -178,7 +178,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 	CHECK_dict_search( DICT_TYPE, TYPE_BY_NAME, "IPFilterRule", &IPFilterRule_type);
 	CHECK_dict_search( DICT_TYPE, TYPE_BY_NAME, "Time", &Time_type);
 	CHECK_dict_search( DICT_TYPE, TYPE_BY_NAME, "UTF8String", &UTF8String_type);
-	
+
 
 	/* The following is created automatically. Do not modify. */
 	/* Changes will be lost during the next update. Modify the source org file instead. */
@@ -6736,18 +6736,31 @@ static int dict_dcca_3gpp_entry(char * conffile)
 		CHECK_dict_new(DICT_AVP, &data, UTF8String_type, NULL);
 	};
 
-	/* Instance-Id */
+	/* IMS-Visited-Network-Identifier */
 	{
 		struct dict_avp_data data = {
-			3402,	/* Code */
+			2713,	/* Code */
 			10415,	/* Vendor */
-			"Instance-Id",	/* Name */
+			"IMS-Visited-Network-Identifier",	/* Name */
 			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
 			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
 			AVP_TYPE_OCTETSTRING	/* base type of data */
 		};
 		CHECK_dict_new(DICT_AVP, &data, UTF8String_type, NULL);
 	};
+
+        /* Instance-Id */
+        {
+                struct dict_avp_data data = {
+                        3402,   /* Code */
+                        10415,  /* Vendor */
+                        "Instance-Id",  /* Name */
+                        AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,    /* Fixed flags */
+                        AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,    /* Fixed flag values */
+                        AVP_TYPE_OCTETSTRING    /* base type of data */
+                };
+                CHECK_dict_new(DICT_AVP, &data, UTF8String_type, NULL);
+        };
 
 	/* SDP-Answer-Timestamp */
 	{
@@ -10348,7 +10361,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 	/*****************************************************/
 
 
-	
+
 	/* 3GPP2-BSID */
 	{
 		struct dict_avp_data data = {
@@ -10363,7 +10376,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 	};
 
 	/* 29.212 */
-	
+
 	{
 		struct dict_object *rule_avp;
 		struct dict_avp_request vpa;
@@ -10406,7 +10419,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 		/* additional allowed AVPs */
 		struct dict_object *ccr;
 		CHECK_dict_search(DICT_COMMAND, CMD_BY_NAME, "Credit-Control-Request", &ccr);
-		struct local_rules_definition rules[] = 
+		struct local_rules_definition rules[] =
 			{
 				{ { .avp_vendor = 10415, .avp_name = "AoC-Request-Type"}, RULE_OPTIONAL, -1, 1 },
 				{ { .avp_vendor = 10415, .avp_name = "Service-Information"}, RULE_OPTIONAL, -1, 1 },
@@ -10418,7 +10431,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 		/* additional allowed AVPs */
 		struct dict_object *ccr;
 		CHECK_dict_search(DICT_COMMAND, CMD_BY_NAME, "Credit-Control-Answer", &ccr);
-		struct local_rules_definition rules[] = 
+		struct local_rules_definition rules[] =
 			{
 				{ { .avp_vendor = 10415, .avp_name = "Low-Balance-Indication"}, RULE_OPTIONAL, -1, 1 },
 				{ { .avp_vendor = 10415, .avp_name = "Remaining-Balance"}, RULE_OPTIONAL, -1, 1 },
