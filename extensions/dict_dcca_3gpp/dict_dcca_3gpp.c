@@ -4375,12 +4375,12 @@ static int dict_dcca_3gpp_entry(char * conffile)
 		CHECK_dict_new(DICT_AVP, &data, NULL, NULL);
 	};
 
-	/* Application-Provided-Called-Party-Address */
+	/* Application-provided-Called-Party-Address */
 	{
 		struct dict_avp_data data = {
 			837,	/* Code */
 			10415,	/* Vendor */
-			"Application-Provided-Called-Party-Address",	/* Name */
+			"Application-provided-Called-Party-Address",	/* Name */
 			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
 			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
 			AVP_TYPE_OCTETSTRING	/* base type of data */
@@ -10449,7 +10449,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
 		struct local_rules_definition rules[] =
 			{
 				{ { .avp_vendor = 10415, .avp_name = "Application-Server" }, RULE_REQUIRED, -1, 1 },
-				{ { .avp_vendor = 10415, .avp_name = "Application-Provided-Called-Party-Address" }, RULE_OPTIONAL, -1, -1 },
+				{ { .avp_vendor = 10415, .avp_name = "Application-provided-Called-Party-Address" }, RULE_OPTIONAL, -1, -1 },
 			};
 			PARSE_loc_rules(rules, rule_avp);
         }
