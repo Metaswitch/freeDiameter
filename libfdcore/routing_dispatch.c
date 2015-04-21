@@ -715,8 +715,15 @@ static int msg_rt_in(struct msg * msg)
 			return 0;
 		}
 
+		/* If the Destination-Realm is wrong */
+		if (is_dest_realm == NO) {
+			if (fd_g_config->cnf_flags.no_fwd) {
+				fd_hook_call(HOOK_MESSAGE_ROUTING_ERROR, msgptr, NULL, "Message for another realm", fd_msg_pmdl_get(msgptr));
+				CHECK_FCT( return_error( &msgptr, "DIAMETER_UNABLE_TO_DELIVER", "I am not a Diameter agent", NULL) );
+				return 0;
+			}
+		} else if (is_dest_host == YES) {
 		/* If we are listed as Destination-Host */
-		if (is_dest_host == YES) {
 			if (is_local_app == YES) {
 				/* Ok, give the message to the dispatch thread */
 				fd_hook_call(HOOK_MESSAGE_ROUTING_LOCAL, msgptr, NULL, NULL, fd_msg_pmdl_get(msgptr));
@@ -727,24 +734,15 @@ static int msg_rt_in(struct msg * msg)
 				CHECK_FCT( return_error( &msgptr, "DIAMETER_APPLICATION_UNSUPPORTED", NULL, NULL) );
 			}
 			return 0;
-		}
-
+		} else if (is_dest_host == NO) {
 		/* If the message is explicitly for someone else */
-		if ((is_dest_host == NO) || (is_dest_realm == NO)) {
 			if (fd_g_config->cnf_flags.no_fwd) {
-				char * error;
-				if (is_dest_host == NO) {
-					error = "Message for another host";
-				}
-				else if (is_dest_realm == NO) {
-					error = "Message for another realm";
-				}
-				fd_hook_call(HOOK_MESSAGE_ROUTING_ERROR, msgptr, NULL, error, fd_msg_pmdl_get(msgptr));
+				fd_hook_call(HOOK_MESSAGE_ROUTING_ERROR, msgptr, NULL, "Message for another host", fd_msg_pmdl_get(msgptr));
 				CHECK_FCT( return_error( &msgptr, "DIAMETER_UNABLE_TO_DELIVER", "I am not a Diameter agent", NULL) );
 				return 0;
 			}
 		} else {
-		/* Destination-Host was not set, and Destination-Realm is matching : we may handle or pass to a fellow peer */
+		/* Destination-Host was not set, and Destination-Realm is matching/unset : we may handle or pass to a fellow peer */
 			int is_nai = 0;
 
 			/* test for decorated NAI  (RFC5729 section 4.4) */

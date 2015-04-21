@@ -151,7 +151,7 @@ static int stow_destination_host(struct msg **msg) {
 			/* add Proxy-Info->{Proxy-Host, Proxy-State} using Destination-Host information */
 			CHECK_FCT(fd_msg_avp_new(ph_avp_do, 0, &ph_avp));
 			memset(&val, 0, sizeof(val));
-                        val.os.data = memdup(fd_g_config->cnf_diamid, fd_g_config->cnf_diamid_len);
+			val.os.data = memdup(fd_g_config->cnf_diamid, fd_g_config->cnf_diamid_len);
 			val.os.len = fd_g_config->cnf_diamid_len;
 			CHECK_FCT(fd_msg_avp_setvalue(ph_avp, &val));
 
@@ -165,8 +165,13 @@ static int stow_destination_host(struct msg **msg) {
 			CHECK_FCT(fd_msg_avp_add(pi_avp, MSG_BRW_LAST_CHILD, ph_avp));
 			CHECK_FCT(fd_msg_avp_add(pi_avp, MSG_BRW_LAST_CHILD, ps_avp));
 
-			/* remove Destination-Host from message */
-			fd_msg_free((msg_or_avp*)avp);
+			/* set the Destination-Host to the local Diameter Identity */
+			union avp_value dh;
+			memset(&dh, 0, sizeof(dh));
+			dh.os.data = memdup(fd_g_config->cnf_diamid, fd_g_config->cnf_diamid_len);
+			dh.os.len = fd_g_config->cnf_diamid_len;
+			CHECK_FCT(fd_msg_avp_setvalue(avp, &dh));
+
 			/* add Proxy-Info */
 			CHECK_FCT(fd_msg_avp_add(*msg, MSG_BRW_LAST_CHILD, pi_avp));
 			fd_log_debug("Stowed Destination-Host '%.*s' into Proxy-Info", (int)val.os.len, (const char *)val.os.data);
@@ -177,27 +182,37 @@ static int stow_destination_host(struct msg **msg) {
 }
 
 /* The callback for putting Destination-Host into Proxy-Info and restoring it on the way back */
-static int rt_ignore_destination_host(void * cbdata, struct msg **msg) {
+static void rt_ignore_destination_host(enum fd_hook_type type,
+                                       struct msg * msg,
+                                       struct peer_hdr* peer,
+                                       void* other,
+                                       struct fd_hook_permsgdata* pmd,
+                                       void* stack_ptr) {
+	CHECK_PARAMS_DO(&msg && msg, {});
+
+	/* Read the message headers */
 	struct msg_hdr * hdr;
-	int ret;
+	CHECK_FCT_DO(fd_msg_hdr(msg, &hdr), {});
 
-	TRACE_ENTRY("%p %p", cbdata, msg);
+	if ((type == HOOK_MESSAGE_RECEIVED) && (hdr->msg_flags & CMD_FLAG_REQUEST)) {
+		switch (hdr->msg_code) {
+			/* Don't modify CERs/DWRs/DPRs */
+			case CC_CAPABILITIES_EXCHANGE:
+			case CC_DISCONNECT_PEER:
+			case CC_DEVICE_WATCHDOG:
+				break;
 
-	CHECK_PARAMS(msg && *msg);
-
-	/* Read the message header */
-	CHECK_FCT(fd_msg_hdr(*msg, &hdr));
-	if (hdr->msg_flags & CMD_FLAG_REQUEST) {
-		ret = stow_destination_host(msg);
-	} else {
-		ret = restore_origin_host(msg);
+			default:
+				stow_destination_host(&msg);
+		}
 	}
-
-	return ret;
+	else if ((type == HOOK_MESSAGE_SENT) && (!(hdr->msg_flags & CMD_FLAG_REQUEST))) {
+		restore_origin_host(&msg);
+	}
 }
 
 /* handler */
-static struct fd_rt_fwd_hdl * rt_ignore_destination_host_hdl = NULL;
+static struct fd_hook_hdl *rt_ignore_dh_hdl = NULL;
 
 /* entry point */
 static int rt_ignore_destination_host_entry(char * conffile)
@@ -214,7 +229,7 @@ static int rt_ignore_destination_host_entry(char * conffile)
 		     { TRACE_ERROR("Unable to find 'Proxy-State' AVP in the loaded dictionaries."); });
 
 	/* Register the callback */
-	CHECK_FCT(fd_rt_fwd_register(rt_ignore_destination_host, NULL, RT_FWD_ALL, &rt_ignore_destination_host_hdl));
+	CHECK_FCT(fd_hook_register(HOOK_MASK(HOOK_MESSAGE_RECEIVED, HOOK_MESSAGE_SENT), rt_ignore_destination_host, NULL, NULL, &rt_ignore_dh_hdl) );
 
 	TRACE_DEBUG(INFO, "Extension 'Ignore Destination Host' initialized");
 	return 0;
@@ -224,7 +239,7 @@ static int rt_ignore_destination_host_entry(char * conffile)
 void fd_ext_fini(void)
 {
 	/* Unregister the callbacks */
-	CHECK_FCT_DO(fd_rt_fwd_unregister(rt_ignore_destination_host_hdl, NULL), /* continue */);
+	CHECK_FCT_DO(fd_hook_unregister(rt_ignore_dh_hdl), );
 	return ;
 }
 
