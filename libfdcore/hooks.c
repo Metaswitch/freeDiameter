@@ -358,6 +358,12 @@ void   fd_hook_call(enum fd_hook_type type, struct msg * msg, struct fd_peer * p
 				break;
 			}
 			
+			case HOOK_MESSAGE_PRE_SEND: {
+				CHECK_MALLOC_DO(fd_msg_dump_summary(&hook_default_buf, &hook_default_len, NULL, msg, NULL, 0, 1), break);
+				LOG_D("GOING TO SEND TO '%s': %s", peer ? peer->p_hdr.info.pi_diamid : "<unknown>", hook_default_buf);
+				break;
+			}
+
 			case HOOK_MESSAGE_SENT: {
 				CHECK_MALLOC_DO(fd_msg_dump_summary(&hook_default_buf, &hook_default_len, NULL, msg, NULL, 0, 1), break);
 				LOG_D("SENT to '%s': %s", peer ? peer->p_hdr.info.pi_diamid : "<unknown>", hook_default_buf);
@@ -427,7 +433,7 @@ void   fd_hook_call(enum fd_hook_type type, struct msg * msg, struct fd_peer * p
 				}
 				break;
 			}
-			
+		
 			case HOOK_PEER_CONNECT_SUCCESS: {
 				DiamId_t id = NULL;
 				if ((!fd_msg_source_get( msg, &id, NULL )) && (id == NULL)) { /* The CEA is locally issued */

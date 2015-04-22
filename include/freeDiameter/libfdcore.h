@@ -1027,6 +1027,16 @@ enum fd_hook_type {
 		 - {permsgdata} points to a new empty structure allocated for this request (cf. fd_hook_data_hdl)
 		 */
 	
+	HOOK_MESSAGE_PRE_SEND,
+		/* Hook called when a message is about to be sent.
+		 - {msg} points to the message to send. Again, the objects may not have been dictionary resolved. If you
+		   try to call fd_msg_parse_dict, it will slow down the operation of a relay agent.
+                 - {peer} is set if the message is to be sent sent to a peer's connection, and NULL if the message is to be sent to a new client
+                   connected and not yet identified, or being rejected
+                 - {other} is a pointer to a fd_cnx_rcvdata structure describing the received message.
+                 - {permsgdata} points to existing structure if any, or a new structure otherwise.
+                 */
+
 	HOOK_MESSAGE_SENT,
 		/* Hook called when a message has been sent to a peer. The message might be freed as soon as the hook function returns,
 		   so it is not safe to store the pointer for asynchronous processing.
