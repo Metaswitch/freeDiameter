@@ -60,6 +60,8 @@ static int do_send(struct msg ** msg, struct cnxctx * cnx, uint32_t * hbh, struc
 		hdr->msg_hbhid = *hbh;
 		*hbh = hdr->msg_hbhid + 1;
 	}
+
+	fd_hook_call(HOOK_MESSAGE_PRE_SEND, *msg, peer, &msgdata, fd_msg_pmdl_get(*msg));
 	
 	/* Create the message buffer */
 	CHECK_FCT(fd_msg_bufferize( *msg, &buf, &sz ));

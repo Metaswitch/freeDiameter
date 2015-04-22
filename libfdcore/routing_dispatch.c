@@ -731,13 +731,18 @@ static int msg_rt_in(struct msg * msg)
 
 		/* If the message is explicitely for someone else */
 		if ((is_dest_host == NO) || (is_dest_realm == NO)) {
+			char* error = "Message for another realm";
+			if (is_dest_host == NO) {
+				error = "Message for another host";
+			}
+  
 			if (fd_g_config->cnf_flags.no_fwd) {
-				fd_hook_call(HOOK_MESSAGE_ROUTING_ERROR, msgptr, NULL, "Message for another realm/host", fd_msg_pmdl_get(msgptr));
+				fd_hook_call(HOOK_MESSAGE_ROUTING_ERROR, msgptr, NULL, error, fd_msg_pmdl_get(msgptr));
 				CHECK_FCT( return_error( &msgptr, "DIAMETER_UNABLE_TO_DELIVER", "I am not a Diameter agent", NULL) );
 				return 0;
 			}
 		} else {
-		/* Destination-Host was not set, and Destination-Realm is matching : we may handle or pass to a fellow peer */
+		/* Destination-Host was not set, and Destination-Realm is matching/unset : we may handle or pass to a fellow peer */
 			int is_nai = 0;
 
 			/* test for decorated NAI  (RFC5729 section 4.4) */
