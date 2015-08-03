@@ -396,7 +396,7 @@ int fd_peer_free(struct fd_peer ** ptr)
 	CHECK_FCT_DO( fd_fifo_del(&p->p_tosend), /* continue */ );
 	CHECK_FCT_DO( fd_fifo_del(&p->p_tofailover), /* continue */ );
 	CHECK_POSIX_DO( pthread_mutex_destroy(&p->p_state_mtx), /* continue */);
- 	CHECK_POSIX_DO( pthread_mutex_destroy(&p->p_sr.mtx), /* continue */);
+	CHECK_POSIX_DO( pthread_mutex_destroy(&p->p_sr.mtx), /* continue */);
 	CHECK_POSIX_DO( pthread_cond_destroy(&p->p_sr.cnd), /* continue */);
 	
 	/* If the callback is still around... */
@@ -467,6 +467,13 @@ int fd_peer_fini()
 
         fd_peer_fini_force();
 
+        /* Free memory objects of all peers */
+        while (!FD_IS_LIST_EMPTY(&purge)) {
+                struct fd_peer * peer = (struct fd_peer *)(purge.next->o);
+                fd_list_unlink(&peer->p_hdr.chain);
+                fd_peer_free(&peer);
+        }
+
         /* Now empty the validators list */
         CHECK_FCT_DO( pthread_rwlock_wrlock(&validators_rw), /* continue */ );
         while (!FD_IS_LIST_EMPTY( &validators )) {
@@ -500,13 +507,6 @@ int fd_peer_fini_force()
                         fd_list_insert_before(&purge, &peer->p_hdr.chain);
                 }
                 CHECK_FCT_DO( pthread_rwlock_unlock(&fd_g_peers_rw), /* continue */ );
-        }
-
-        /* Free memory objects of all peers */
-        while (!FD_IS_LIST_EMPTY(&purge)) {
-                struct fd_peer * peer = (struct fd_peer *)(purge.next->o);
-                fd_list_unlink(&peer->p_hdr.chain);
-                fd_peer_free(&peer);
         }
 }
 
