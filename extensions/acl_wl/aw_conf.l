@@ -86,7 +86,8 @@ ALLOW_OLD_TLS		{
 			}
 
 	/* Any other string is considered a fqdn or partial fqdn with a star. The star can only be the first label. */
-(\*|[[:alnum:]][[:alnum:]-]*)(\.[[:alnum:]][[:alnum:]-]*)+	{
+(\*|[[:alnum:]][[:alnum:]-]*)(\.[[:alnum:]][[:alnum:]-]*)+ |
+\*$                     {
 				/* We matched a valid label, let's directly save it into the tree. The function will issue the appropriate warnings. */
 				CHECK_FCT_DO( aw_tree_add(yytext, curflag), return LEX_ERROR);
 				yylval->string = yytext;
