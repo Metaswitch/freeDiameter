@@ -175,6 +175,7 @@ int fd_peer_add ( struct peer_info * info, const char * orig_dbg, void (*cb)(str
 	if (ret) {
 		CHECK_FCT( fd_peer_free(&p) );
 	} else {
+		TRACE_DEBUG(FULL, "Diameter peer %*s added", (int)info->pi_diamidlen, info->pi_diamid);
 		CHECK_FCT( fd_psm_begin(p) );
 	}
 	return ret;
@@ -184,6 +185,8 @@ int fd_peer_add ( struct peer_info * info, const char * orig_dbg, void (*cb)(str
 int fd_peer_remove ( DiamId_t diamid, size_t diamidlen )
 {
 	struct fd_list * li;
+	TRACE_DEBUG(FULL, "Remove diameter peer %*s", (int)diamidlen, diamid);
+	int found = 0;
 
 	// Find the peer in the peer list from its pi_diamid.
 	CHECK_POSIX( pthread_rwlock_wrlock(&fd_g_peers_rw) );
@@ -197,8 +200,14 @@ int fd_peer_remove ( DiamId_t diamid, size_t diamidlen )
 			peer->p_hdr.info.config.pic_flags.exp = PI_EXP_INACTIVE;
 			peer->p_hdr.info.config.pic_lft = 0;
 			CHECK_FCT( fd_p_expi_update(peer) );
+			found = 1;
 			break;
 		}
+	}
+
+	if (!found)
+	{
+		TRACE_ERROR("Diameter peer %*s not valid - caller is out of sync", (int)diamidlen, diamid);
 	}
 
 	CHECK_POSIX( pthread_rwlock_unlock(&fd_g_peers_rw) );
