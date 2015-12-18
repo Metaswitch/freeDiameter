@@ -41,6 +41,9 @@
 #include "fdproto-internal.h"
 
 #include <sys/param.h>
+#include <stdbool.h>
+
+static uint32_t* untrusted_avp_vendors = {0};
 
 /* Type of object */
 enum msg_objtype {
@@ -2117,18 +2120,34 @@ static int parsedict_do_avp(struct dictionary * dict, struct avp * avp, int mand
 	if (!avp->avp_model) {
 		
 		if (mandatory && (avp->avp_public.avp_flags & AVP_FLAG_MANDATORY)) {
-			TRACE_DEBUG(INFO, "Unsupported mandatory AVP found");
-			if (error_info) {
-				error_info->pei_errcode = "DIAMETER_AVP_UNSUPPORTED";
-				error_info->pei_avp = avp;
-			} else {
-				char * buf = NULL;
-				size_t buflen;
-				CHECK_MALLOC(fd_msg_dump_treeview(&buf, &buflen, NULL, avp, NULL, 0, 0));
-				LOG_E("Unsupported AVP: %s", buf);
-				free(buf);
+			/* If this mandatory AVP is from one of our untrusted AVP vendors, then we
+			 * don't care that it's mandatory. */
+			int ii = 0;
+			bool untrusted_avp_vendor = false;
+			while (untrusted_avp_vendors[ii] != 0) {
+				if (avp->avp_public.avp_vendor == untrusted_avp_vendors[ii]) {
+					untrusted_avp_vendor = true;
+					break;
+				}
+				ii++;
 			}
-			return ENOTSUP;
+			
+			if (!untrusted_avp_vendor) {
+				TRACE_DEBUG(INFO, "Unsupported mandatory AVP found");
+				if (error_info) {
+					error_info->pei_errcode = "DIAMETER_AVP_UNSUPPORTED";
+					error_info->pei_avp = avp;
+				} else {
+					char * buf = NULL;
+					size_t buflen;
+					CHECK_MALLOC(fd_msg_dump_treeview(&buf, &buflen, NULL, avp, NULL, 0, 0));
+					LOG_E("Unsupported AVP: %s", buf);
+					free(buf);
+				}
+				return ENOTSUP;
+			} else {
+				TRACE_DEBUG(FULL, "Unknown mandatory AVP from untrusted AVP vendor, ignoring...");
+			}
 		}
 		
 		if (avp->avp_source) {
@@ -2594,14 +2613,31 @@ static int parserules_do ( struct dictionary * dict, msg_or_avp * object, struct
 
 		/* AVP with the 'M' flag must also be recognized in the dictionary -- except inside an optional grouped AVP */
 		if (CHECK_AVP(object) && ((model = _A(object)->avp_model) == NULL)) {
-			if ( mandatory && (_A(object)->avp_public.avp_flags & AVP_FLAG_MANDATORY)) {
-				/* Return an error in this case */
-				TRACE_DEBUG(INFO, "Mandatory AVP with no dictionary model. EBADMSG");
-				if (error_info) {
-					error_info->pei_errcode = "DIAMETER_AVP_UNSUPPORTED";
-					error_info->pei_avp = object;
+			if (mandatory && (_A(object)->avp_public.avp_flags & AVP_FLAG_MANDATORY)) {
+				/* If this mandatory AVP is from one of our untrusted AVP vendors, then we
+				 * don't care that it's mandatory. */
+				int ii = 0;
+				bool untrusted_avp_vendor = false;
+				while (untrusted_avp_vendors[ii] != 0) {
+					if (_A(object)->avp_public.avp_vendor == untrusted_avp_vendors[ii]) {
+						untrusted_avp_vendor = true;
+						break;
+					}
+					ii++;
 				}
-				return EBADMSG;
+				
+				if (!untrusted_avp_vendor) {
+					/* Return an error in this case */
+					TRACE_DEBUG(INFO, "Mandatory AVP with no dictionary model. EBADMSG");
+					if (error_info) {
+						error_info->pei_errcode = "DIAMETER_AVP_UNSUPPORTED";
+						error_info->pei_avp = object;
+					}
+					return EBADMSG;
+				} else {
+					TRACE_DEBUG(FULL, "Unknown mandatory AVP from untrusted AVP vendor, ignoring...");
+					return 0;
+				}
 			} else {
 				/* We don't know any rule for this object, so assume OK */
 				TRACE_DEBUG(FULL, "Unknown informational AVP, ignoring...");
@@ -2844,4 +2880,9 @@ out:
 	return ret ?: r2;
 }
 
-
+int fd_define_untrusted_avp_vendors(uint32_t* cnf_untrusted_avp_vendors)
+{
+	untrusted_avp_vendors = cnf_untrusted_avp_vendors;
+	
+	return 0;
+}

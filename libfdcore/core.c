@@ -218,6 +218,7 @@ int fd_core_initialize(void)
 	CHECK_FCT( fd_queues_init() );
 	CHECK_FCT( fd_sess_start()  );
 	CHECK_FCT( fd_p_expi_init() );
+	CHECK_FCT( fd_define_untrusted_avp_vendors(fd_g_config->cnf_untrusted_avp_vendors) );
 	
 	core_state_set(CORE_LIBS_INIT);
 	

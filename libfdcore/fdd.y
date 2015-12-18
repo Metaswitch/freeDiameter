@@ -83,6 +83,7 @@ struct peer_info fddpi;
 %union {
 	char 		 *string;	/* The string is allocated by strdup in lex.*/
 	int		  integer;	/* Store integer values */
+	uint32_t*		  uinteger32_t;	/* Store uint32_t values */
 }
 
 /* In case of error in the lexical analysis */
@@ -92,6 +93,7 @@ struct peer_info fddpi;
 %token <integer> INTEGER
 
 %type <string> 	extconf
+%type <uinteger32_t> 	vendor_list
 
 %token		IDENTITY
 %token		REALM
@@ -121,6 +123,7 @@ struct peer_info fddpi;
 %token		TLS_PRIO
 %token		TLS_DH_BITS
 %token		TLS_DH_FILE
+%token		UNTRUSTED_AVP_VENDORS
 
 
 /* -------------------------------------- */
@@ -153,6 +156,7 @@ conffile:		/* Empty is OK -- for simplicity here, we reject in daemon later */
 			| conffile tls_crl
 			| conffile tls_prio
 			| conffile tls_dh
+			| conffile untrusted_avp_vendors
 			| conffile errors
 			{
 				yyerror(&yylloc, conf, "An error occurred while parsing the configuration file");
@@ -663,5 +667,33 @@ tls_dh:			TLS_DH_BITS '=' INTEGER ';'
 					YYERROR;
 				}
 				fclose(fd);
+			}
+			;
+			
+untrusted_avp_vendors:			UNTRUSTED_AVP_VENDORS '=' vendor_list ';'
+			{
+				conf->cnf_untrusted_avp_vendors = $3;
+			}
+			;
+			
+vendor_list:			vendor_list ',' INTEGER
+			{
+				uint32_t* arr = $1;
+				int len = 0;
+				while (arr[len] != 0) { ++len; };
+				$$ = (uint32_t*)realloc(arr, sizeof(uint32_t) * (len + 2));
+				$$[len] = $3;
+				$$[len + 1] = 0;
+			}
+			| INTEGER
+			{
+				$$ = (uint32_t*)calloc(2, sizeof(uint32_t));
+				$$[0] = $1;
+				$$[1] = 0;
+			}
+			|
+			{
+				$$ = (uint32_t*)calloc(1, sizeof(uint32_t));
+				$$[0] = 0;
 			}
 			;
