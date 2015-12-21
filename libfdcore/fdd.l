@@ -269,6 +269,7 @@ nomatch:
 (?i:"TLS_Prio")		{ return TLS_PRIO;	}
 (?i:"TLS_DH_bits")	{ return TLS_DH_BITS;	}
 (?i:"TLS_DH_file")	{ return TLS_DH_FILE;	}
+(?i:"UntrustedAVPVendors")	{ return UNTRUSTED_AVP_VENDORS;	}
 
 
 	/* Valid single characters for yyparse */

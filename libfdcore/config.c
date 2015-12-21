@@ -638,6 +638,8 @@ int fd_conf_deinit()
 	free(fd_g_config->cnf_diamid); fd_g_config->cnf_diamid = NULL;
 	free(fd_g_config->cnf_diamrlm); fd_g_config->cnf_diamrlm = NULL;
 	
+	/* Destroy the untrusted AVP vendors */
+	free(fd_g_config->cnf_untrusted_avp_vendors); fd_g_config->cnf_untrusted_avp_vendors = NULL;
 	return 0;
 }
 

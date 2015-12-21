@@ -3221,6 +3221,10 @@ int fd_fifo_select ( struct fifo * queue, const struct timespec *abstime );
 typedef DECLARE_FD_DUMP_PROTOTYPE((*fd_fifo_dump_item_cb), void * item); /* This function should be 1 line if possible, or use indent level. Ends with '\n' */
 DECLARE_FD_DUMP_PROTOTYPE(fd_fifo_dump, char * name, struct fifo * queue, fd_fifo_dump_item_cb dump_item);
 
+/* We ignore the mandatory flag on AVPs from this list of vendors. The list
+ * should be 0 terminated. By default there are no such vendors. */
+int fd_define_untrusted_avp_vendors(uint32_t* untrusted_avp_vendors);
+
 #ifdef __cplusplus
 }
 #endif
