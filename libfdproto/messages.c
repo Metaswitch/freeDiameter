@@ -43,7 +43,7 @@
 #include <sys/param.h>
 #include <stdbool.h>
 
-static uint32_t* untrusted_avp_vendors = {0};
+static uint32_t* untrusted_avp_vendors = NULL;
 
 /* Type of object */
 enum msg_objtype {
@@ -2122,14 +2122,16 @@ static int parsedict_do_avp(struct dictionary * dict, struct avp * avp, int mand
 		if (mandatory && (avp->avp_public.avp_flags & AVP_FLAG_MANDATORY)) {
 			/* If this mandatory AVP is from one of our untrusted AVP vendors, then we
 			 * don't care that it's mandatory. */
-			int ii = 0;
 			bool untrusted_avp_vendor = false;
-			while (untrusted_avp_vendors[ii] != 0) {
-				if (avp->avp_public.avp_vendor == untrusted_avp_vendors[ii]) {
-					untrusted_avp_vendor = true;
-					break;
+			if (untrusted_avp_vendors != NULL) {
+				int ii = 0;
+				while (untrusted_avp_vendors[ii] != 0) {
+					if (avp->avp_public.avp_vendor == untrusted_avp_vendors[ii]) {
+						untrusted_avp_vendor = true;
+						break;
+					}
+					ii++;
 				}
-				ii++;
 			}
 			
 			if (!untrusted_avp_vendor) {
@@ -2616,14 +2618,16 @@ static int parserules_do ( struct dictionary * dict, msg_or_avp * object, struct
 			if (mandatory && (_A(object)->avp_public.avp_flags & AVP_FLAG_MANDATORY)) {
 				/* If this mandatory AVP is from one of our untrusted AVP vendors, then we
 				 * don't care that it's mandatory. */
-				int ii = 0;
 				bool untrusted_avp_vendor = false;
-				while (untrusted_avp_vendors[ii] != 0) {
-					if (_A(object)->avp_public.avp_vendor == untrusted_avp_vendors[ii]) {
-						untrusted_avp_vendor = true;
-						break;
+				if (untrusted_avp_vendors != NULL) {
+					int ii = 0;
+					while (untrusted_avp_vendors[ii] != 0) {
+						if (_A(object)->avp_public.avp_vendor == untrusted_avp_vendors[ii]) {
+							untrusted_avp_vendor = true;
+							break;
+						}
+						ii++;
 					}
-					ii++;
 				}
 				
 				if (!untrusted_avp_vendor) {

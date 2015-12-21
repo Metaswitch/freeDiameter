@@ -83,7 +83,7 @@ struct peer_info fddpi;
 %union {
 	char 		 *string;	/* The string is allocated by strdup in lex.*/
 	int		  integer;	/* Store integer values */
-	uint32_t*		  uinteger32_t;	/* Store uint32_t values */
+	uint32_t*		  uint32_ptr;	/* Store uint32_t values */
 }
 
 /* In case of error in the lexical analysis */
@@ -93,7 +93,7 @@ struct peer_info fddpi;
 %token <integer> INTEGER
 
 %type <string> 	extconf
-%type <uinteger32_t> 	vendor_list
+%type <uint32_ptr> 	vendor_list
 
 %token		IDENTITY
 %token		REALM
@@ -691,7 +691,7 @@ vendor_list:			vendor_list ',' INTEGER
 				$$[0] = $1;
 				$$[1] = 0;
 			}
-			|
+			| /* empty */
 			{
 				$$ = (uint32_t*)calloc(1, sizeof(uint32_t));
 				$$[0] = 0;
