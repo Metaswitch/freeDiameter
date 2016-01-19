@@ -162,6 +162,13 @@ static int dict_dcca_3gpp_entry(char * conffile)
                         struct dict_application_data app_data = { 16777216, "Cx" };
                         CHECK_FCT(fd_dict_new(fd_g_config->cnf_dict, DICT_APPLICATION, &app_data, vendor, NULL));
                 }
+
+                {
+                        struct dict_object * vendor;
+                        CHECK_FCT(fd_dict_search(fd_g_config->cnf_dict, DICT_VENDOR, VENDOR_BY_NAME, "3GPP", &vendor, ENOENT));
+                        struct dict_application_data app_data = { 16777236, "Rx" };
+                        CHECK_FCT(fd_dict_new(fd_g_config->cnf_dict, DICT_APPLICATION, &app_data, vendor, NULL));
+                }
 	}
 
 
