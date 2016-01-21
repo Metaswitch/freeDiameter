@@ -155,6 +155,10 @@ static int dict_dcca_3gpp_entry(char * conffile)
                         struct dict_vendor_data vendor_data = { 5535, "3GPP2" };
                         CHECK_FCT(fd_dict_new(fd_g_config->cnf_dict, DICT_VENDOR, &vendor_data, NULL, NULL));
                 }
+                {
+                        struct dict_vendor_data vendor_data = { 13019, "ETSI" };
+                        CHECK_FCT(fd_dict_new(fd_g_config->cnf_dict, DICT_VENDOR, &vendor_data, NULL, NULL));
+                }
 
                 {
                         struct dict_object * vendor;
@@ -10894,6 +10898,17 @@ static int dict_dcca_3gpp_entry(char * conffile)
 			};
 			PARSE_loc_rules(rules, rule_avp);
 	}
+	{
+		struct dict_avp_data data = {
+			458,	/* Code */
+			13019,	/* Vendor */
+			"Reservation-Priority",	/* Name */
+			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
+			AVP_FLAG_VENDOR,	/* Fixed flag values */
+			AVP_TYPE_UNSIGNED32	/* base type of data */ /* XXX: guessed */
+		};
+		CHECK_dict_new(DICT_AVP, &data, NULL, NULL);
+	};
   /* Command section */
   {
     struct dict_object* app;
@@ -11293,6 +11308,86 @@ static int dict_dcca_3gpp_entry(char * conffile)
       PARSE_loc_rules(rules, cmd_ppa);
     }
   }
+
+  struct dict_object* rx;
+  CHECK_FCT(fd_dict_search(fd_g_config->cnf_dict, DICT_APPLICATION, APPLICATION_BY_NAME, "Rx", &rx, ENOENT));
+
+  /* AA-Request (AAR) Command */
+  {
+    struct dict_object * cmd;
+    struct dict_cmd_data data = {
+      265, 					/* Code */
+      "AA-Request", 				/* Name */
+      CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
+      CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE	/* Fixed flag values */
+    };
+    struct local_rules_definition rules[] =
+    {
+       {  { .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 }
+      ,{  { .avp_name = "Auth-Application-Id" }, RULE_REQUIRED, -1, 1 }
+      ,{  { .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 }
+      ,{  { .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "AF-Application-Identifier" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Media-Component-Description" }, RULE_OPTIONAL, -1, -1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Service-Info-Status" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "AF-Charging-Identifier" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "SIP-Forking-Indication" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Specific-Action" }, RULE_OPTIONAL, -1, -1 }
+      ,{  { .avp_name = "Subscription-Id" }, RULE_OPTIONAL, -1, -1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Supported-Features" }, RULE_OPTIONAL, -1, -1 }
+      ,{  { .avp_vendor = 13019, .avp_name = "Reservation-Priority" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_name = "Framed-IP-Address" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_name = "Framed-IPv6-Prefix" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_name = "Called-Station-Id" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Service-URN" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Sponsored-Connectivity-Data" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "MPS-Identifier" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_name = "Origin-State-Id" }, RULE_OPTIONAL, -1, 1 }
+    };
+
+    CHECK_dict_new( DICT_COMMAND, &data, rx, &cmd);
+    PARSE_loc_rules( rules, cmd );
+  }
+
+  /* AA-Answer (AAA) Command */
+  {
+    struct dict_object * cmd;
+    struct dict_cmd_data data = {
+      265, 					/* Code */
+      "AA-Answer", 				/* Name */
+      CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
+      CMD_FLAG_PROXIABLE	/* Fixed flag values */
+    };
+    struct local_rules_definition rules[] =
+    {
+       {  { .avp_name = "Session-Id" }, 			RULE_FIXED_HEAD, -1, 1 }
+      ,{  { .avp_name = "Auth-Application-Id" }, 		RULE_REQUIRED,   -1, 1 }
+      ,{  { .avp_name = "Result-Code" }, 			RULE_OPTIONAL,   -1, 1 }
+      ,{  { .avp_name = "Experimental-Result" }, 			RULE_OPTIONAL,   -1, 1 }
+      ,{  { .avp_name = "Origin-Host" }, 			RULE_REQUIRED,   -1, 1 }
+      ,{  { .avp_name = "Origin-Realm" },			RULE_REQUIRED,   -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Access-Network-Charging-Identifier" }, 			RULE_OPTIONAL,   -1, -1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Access-Network-Charging-Address" }, 			RULE_OPTIONAL,   -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Acceptable-Service-Info" }, 			RULE_OPTIONAL,   -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "IP-CAN-Type" }, 			RULE_OPTIONAL,   -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "RAT-Type" }, 			RULE_OPTIONAL,   -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Flows" }, 			RULE_OPTIONAL,   -1, -1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Supported-Features" }, 			RULE_OPTIONAL,   -1, -1 }
+      ,{  { .avp_name = "Class" },				RULE_OPTIONAL,   -1,-1 }
+      ,{  { .avp_name = "Error-Message" },			RULE_OPTIONAL,   -1, 1 }
+      ,{  { .avp_name = "Error-Reporting-Host" },		RULE_OPTIONAL,   -1, 1 }
+      ,{  { .avp_name = "Failed-AVP" },			RULE_OPTIONAL,   -1,-1 }
+      ,{  { .avp_name = "Origin-State-Id" },			RULE_OPTIONAL,   -1, 1 }
+      ,{  { .avp_name = "Redirect-Host" },			RULE_OPTIONAL,   -1,-1 }
+      ,{  { .avp_name = "Redirect-Host-Usage" },		RULE_OPTIONAL,   -1, 1 }
+      ,{  { .avp_name = "Redirect-Max-Cache-Time" },		RULE_OPTIONAL,   -1, 1 }
+      ,{  { .avp_name = "Proxy-Info" },			RULE_OPTIONAL,   -1,-1 }
+    };
+
+    CHECK_dict_new( DICT_COMMAND, &data, rx, &cmd);
+    PARSE_loc_rules( rules, cmd );
+  }
+
   LOG_D( "Extension 'Dictionary definitions for DCCA 3GPP' initialized");
   return 0;
 }
