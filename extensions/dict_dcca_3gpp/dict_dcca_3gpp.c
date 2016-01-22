@@ -11316,10 +11316,10 @@ static int dict_dcca_3gpp_entry(char * conffile)
   {
     struct dict_object * cmd;
     struct dict_cmd_data data = {
-      265, 					/* Code */
-      "AA-Request", 				/* Name */
+      265, /* Code */
+      "AA-Request", /* Name */
       CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
-      CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE	/* Fixed flag values */
+      CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE /* Fixed flag values */
     };
     struct local_rules_definition rules[] =
     {
@@ -11353,38 +11353,49 @@ static int dict_dcca_3gpp_entry(char * conffile)
   {
     struct dict_object * cmd;
     struct dict_cmd_data data = {
-      265, 					/* Code */
-      "AA-Answer", 				/* Name */
+      265, /* Code */
+      "AA-Answer", /* Name */
       CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
-      CMD_FLAG_PROXIABLE	/* Fixed flag values */
+      CMD_FLAG_PROXIABLE /* Fixed flag values */
     };
     struct local_rules_definition rules[] =
     {
-       {  { .avp_name = "Session-Id" }, 			RULE_FIXED_HEAD, -1, 1 }
-      ,{  { .avp_name = "Auth-Application-Id" }, 		RULE_REQUIRED,   -1, 1 }
-      ,{  { .avp_name = "Result-Code" }, 			RULE_OPTIONAL,   -1, 1 }
-      ,{  { .avp_name = "Experimental-Result" }, 			RULE_OPTIONAL,   -1, 1 }
-      ,{  { .avp_name = "Origin-Host" }, 			RULE_REQUIRED,   -1, 1 }
-      ,{  { .avp_name = "Origin-Realm" },			RULE_REQUIRED,   -1, 1 }
-      ,{  { .avp_vendor = 10415, .avp_name = "Access-Network-Charging-Identifier" }, 			RULE_OPTIONAL,   -1, -1 }
-      ,{  { .avp_vendor = 10415, .avp_name = "Access-Network-Charging-Address" }, 			RULE_OPTIONAL,   -1, 1 }
-      ,{  { .avp_vendor = 10415, .avp_name = "Acceptable-Service-Info" }, 			RULE_OPTIONAL,   -1, 1 }
-      ,{  { .avp_vendor = 10415, .avp_name = "IP-CAN-Type" }, 			RULE_OPTIONAL,   -1, 1 }
-      ,{  { .avp_vendor = 10415, .avp_name = "RAT-Type" }, 			RULE_OPTIONAL,   -1, 1 }
-      ,{  { .avp_vendor = 10415, .avp_name = "Flows" }, 			RULE_OPTIONAL,   -1, -1 }
-      ,{  { .avp_vendor = 10415, .avp_name = "Supported-Features" }, 			RULE_OPTIONAL,   -1, -1 }
-      ,{  { .avp_name = "Class" },				RULE_OPTIONAL,   -1,-1 }
-      ,{  { .avp_name = "Error-Message" },			RULE_OPTIONAL,   -1, 1 }
-      ,{  { .avp_name = "Error-Reporting-Host" },		RULE_OPTIONAL,   -1, 1 }
-      ,{  { .avp_name = "Failed-AVP" },			RULE_OPTIONAL,   -1,-1 }
-      ,{  { .avp_name = "Origin-State-Id" },			RULE_OPTIONAL,   -1, 1 }
-      ,{  { .avp_name = "Redirect-Host" },			RULE_OPTIONAL,   -1,-1 }
-      ,{  { .avp_name = "Redirect-Host-Usage" },		RULE_OPTIONAL,   -1, 1 }
-      ,{  { .avp_name = "Redirect-Max-Cache-Time" },		RULE_OPTIONAL,   -1, 1 }
-      ,{  { .avp_name = "Proxy-Info" },			RULE_OPTIONAL,   -1,-1 }
+       {  { .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 }
+      ,{  { .avp_name = "Auth-Application-Id" }, RULE_REQUIRED, -1, 1 }
+      ,{  { .avp_name = "Result-Code" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_name = "Experimental-Result" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 }
+      ,{  { .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Access-Network-Charging-Identifier" }, RULE_OPTIONAL, -1, -1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Access-Network-Charging-Address" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Acceptable-Service-Info" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "IP-CAN-Type" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "RAT-Type" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Flows" }, RULE_OPTIONAL, -1, -1 }
+      ,{  { .avp_vendor = 10415, .avp_name = "Supported-Features" }, RULE_OPTIONAL, -1, -1 }
+      ,{  { .avp_name = "Class" }, RULE_OPTIONAL, -1,-1 }
+      ,{  { .avp_name = "Error-Message" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_name = "Error-Reporting-Host" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_name = "Failed-AVP" }, RULE_OPTIONAL, -1,-1 }
+      ,{  { .avp_name = "Origin-State-Id" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_name = "Redirect-Host" }, RULE_OPTIONAL, -1,-1 }
+      ,{  { .avp_name = "Redirect-Host-Usage" }, RULE_OPTIONAL, -1, 1 }
+      ,{  { .avp_name = "Redirect-Max-Cache-Time" }, RULE_OPTIONAL, -1, 1 }
     };
 
     CHECK_dict_new( DICT_COMMAND, &data, rx, &cmd);
+    PARSE_loc_rules( rules, cmd );
+  }
+
+  /* Session-Termination-Answer (STA) Command - Extension for Rx*/
+  {
+    struct dict_object * cmd;
+    struct local_rules_definition rules[] =
+    {
+      {  { .avp_vendor = 10415, .avp_name = "Sponsored-Connectivity-Data" }, RULE_OPTIONAL, -1, -1 }
+    };
+
+    CHECK_dict_search( DICT_COMMAND, CMD_BY_NAME, "Session-Termination-Answer", &cmd);
     PARSE_loc_rules( rules, cmd );
   }
 
