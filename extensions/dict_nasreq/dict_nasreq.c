@@ -2916,7 +2916,6 @@ static int dnr_entry(char * conffile)
 		 * This is far from optimal, but the code is clearer like this, and the time it requires at execution is not noticeable.
 		 */
 		
-#if 0
 		/* AA-Request (AAR) Command */
 		{
 			/*
@@ -3000,16 +2999,6 @@ static int dnr_entry(char * conffile)
         				     * [ Proxy-Info ]
         				     * [ Route-Record ]
         				     * [ AVP ]
-
-				TS 29.221 extends AA-Request for the Rx interface with the following
-				AVPs
-
-								     * [ Media-Component-Description ]
-										 * [ Flow-Grouping ]
-										   [ AF-Charging-Identifier ]
-											 [ SIP-Forking-Identifier ]
-										 * [ Specific-Action ]
-										 * [ Subscription-ID ]
 			*/
 			struct dict_object * cmd;
 			struct dict_cmd_data data = { 
@@ -3068,12 +3057,6 @@ static int dnr_entry(char * conffile)
 							,{  "Tunneling",			RULE_OPTIONAL,   -1,-1 }
 							,{  "Proxy-Info",			RULE_OPTIONAL,   -1,-1 }
 							,{  "Route-Record",			RULE_OPTIONAL,   -1,-1 }
-							,{  "Media-Component-Description", RULE_OPTIONAL, -1, -1 }
-							,{  "Flow-Grouping", RULE_OPTIONAL, -1, -1 }
-							,{  "AF-Charging-Identifier", RULE_OPTIONAL, -1, 1 }
-							,{  "Sip-Forking-Identifier", RULE_OPTIONAL, -1, 1 }
-							,{  "Specific-Action", RULE_OPTIONAL, -1, -1 }
-							,{  "Subscription-ID", RULE_OPTIONAL, -1, -1 }
 						};
 			
 			CHECK_dict_new( DICT_COMMAND, &data , nasreq, &cmd);
@@ -3255,7 +3238,6 @@ static int dnr_entry(char * conffile)
 			CHECK_dict_new( DICT_COMMAND, &data , nasreq, &cmd);
 			PARSE_loc_rules( rules, cmd );
 		}
-#endif
 		
 		/* Re-Auth-Request */
 		{
