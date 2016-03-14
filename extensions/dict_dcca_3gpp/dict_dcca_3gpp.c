@@ -404,12 +404,12 @@ static int dict_dcca_3gpp_entry(char * conffile)
 
 	/* M inconsistently specified                                   */
 	/* 29.061 says MUST NOT M; old contrib/3gpp says MUST           */
-	/* 3GPP-SGSN-IPv6-Address */
+	/* 3GPP-SGSN-Ipv6-Address */
 	{
 		struct dict_avp_data data = {
 			15,	/* Code */
 			10415,	/* Vendor */
-			"3GPP-SGSN-IPv6-Address",	/* Name */
+			"3GPP-SGSN-Ipv6-Address",	/* Name */
 			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
 			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flag values */
 			AVP_TYPE_OCTETSTRING	/* base type of data */
@@ -10905,6 +10905,8 @@ static int dict_dcca_3gpp_entry(char * conffile)
 			};
 			PARSE_loc_rules(rules, rule_avp);
 	}
+
+	/* Reservation-Priority */
 	{
 		struct dict_avp_data data = {
 			458,	/* Code */
@@ -10912,10 +10914,37 @@ static int dict_dcca_3gpp_entry(char * conffile)
 			"Reservation-Priority",	/* Name */
 			AVP_FLAG_VENDOR |AVP_FLAG_MANDATORY,	/* Fixed flags */
 			AVP_FLAG_VENDOR,	/* Fixed flag values */
-			AVP_TYPE_UNSIGNED32	/* base type of data */ /* XXX: guessed */
+			AVP_TYPE_UNSIGNED32	/* base type of data */
 		};
 		CHECK_dict_new(DICT_AVP, &data, NULL, NULL);
 	};
+
+	/* Logical-Access-ID */
+	{
+		struct dict_avp_data data = {
+			302,	/* Code */
+			13019,	/* Vendor */
+			"Logical-Access-ID",	/* Name */
+			AVP_FLAG_VENDOR,	/* Fixed flags */
+			AVP_FLAG_VENDOR,	/* Fixed flag values */
+			AVP_TYPE_OCTETSTRING	/* base type of data */
+		};
+		CHECK_dict_new(DICT_AVP, &data, NULL, NULL);
+	};
+
+	/* Physical-Access-ID */
+	{
+		struct dict_avp_data data = {
+			313,	/* Code */
+			13019,	/* Vendor */
+			"Physical-Access-ID",	/* Name */
+			AVP_FLAG_VENDOR,	/* Fixed flags */
+			AVP_FLAG_VENDOR,	/* Fixed flag values */
+			AVP_TYPE_OCTETSTRING	/* base type of data */
+		};
+		CHECK_dict_new(DICT_AVP, &data, UTF8String_type, NULL);
+	};
+
   /* Command section */
   {
     struct dict_object* app;
@@ -11348,7 +11377,6 @@ static int dict_dcca_3gpp_entry(char * conffile)
     struct dict_object * cmd;
     struct local_rules_definition rules[] =
     {
-      {  {                      .avp_name = "Result-Code" }, RULE_OPTIONAL, -1, 1 },
       {  {                      .avp_name = "Experimental-Result" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "Access-Network-Charging-Identifier" }, RULE_OPTIONAL, -1, -1 },
       {  { .avp_vendor = 10415, .avp_name = "Access-Network-Charging-Address" }, RULE_OPTIONAL, -1, 1 },
@@ -11372,7 +11400,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
       {  { .avp_vendor = 10415, .avp_name = "Access-Network-Charging-Identifier" }, RULE_OPTIONAL, -1, -1 },
       {  { .avp_vendor = 10415, .avp_name = "Access-Network-Charging-Address" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "Flows" }, RULE_OPTIONAL, -1, -1 },
-      {  { .avp_vendor = 10415, .avp_name = "Subscription-Id" }, RULE_OPTIONAL, -1, -1 },
+      {  {                      .avp_name = "Subscription-Id" }, RULE_OPTIONAL, -1, -1 },
       {  { .avp_vendor = 10415, .avp_name = "Abort-Cause" }, RULE_REQUIRED, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "IP-CAN-Type" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "RAT-Type" }, RULE_OPTIONAL, -1, 1 },
@@ -11388,12 +11416,10 @@ static int dict_dcca_3gpp_entry(char * conffile)
     struct dict_object * cmd;
     struct local_rules_definition rules[] =
     {
-      {  {                      .avp_name = "Result-Code" }, RULE_OPTIONAL, -1, 1 },
       {  {                      .avp_name = "Experimental-Result" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "Media-Component-Description" }, RULE_OPTIONAL, -1, -1 },
       {  { .avp_vendor = 10415, .avp_name = "Service-URN" }, RULE_OPTIONAL, -1, 1 },
-      {  {                      .avp_name = "Redirect-Max-Cache-Time" }, RULE_OPTIONAL, -1, 1 },
-      {  {                      .avp_name = "Failed-AVP" }, RULE_OPTIONAL, -1,-1 }
+      {  {                      .avp_name = "Redirect-Max-Cache-Time" }, RULE_OPTIONAL, -1, 1 }
     };
 
     CHECK_dict_search( DICT_COMMAND, CMD_BY_NAME, "Re-Auth-Answer", &cmd);
@@ -11430,7 +11456,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
     struct dict_object * cmd;
     struct local_rules_definition rules[] =
     {
-      {  {                      .avp_name = "Session-Release-Cause" }, RULE_OPTIONAL, -1, 1 },
+      {  { .avp_vendor = 10415, .avp_name = "Session-Release-Cause" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "Event-Trigger" }, RULE_OPTIONAL, -1, -1 },
       {  { .avp_vendor = 10415, .avp_name = "Event-Report-Indication" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "Charging-Rule-Remove" }, RULE_OPTIONAL, -1, -1 },
@@ -11450,7 +11476,6 @@ static int dict_dcca_3gpp_entry(char * conffile)
     struct dict_object * cmd;
     struct local_rules_definition rules[] =
     {
-      {  {                      .avp_name = "Result-Code" }, RULE_OPTIONAL, -1, 1 },
       {  {                      .avp_name = "Experimental-Result" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "IP-CAN-Type" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "RAT-Type" }, RULE_OPTIONAL, -1, 1 },
@@ -11510,8 +11535,8 @@ static int dict_dcca_3gpp_entry(char * conffile)
       {  { .avp_vendor = 10415, .avp_name = "Usage-Monitoring-Information" }, RULE_OPTIONAL, -1, -1 },
       {  { .avp_vendor = 10415, .avp_name = "Routing-Rule-Install" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "Routing-Rule-Remove" }, RULE_OPTIONAL, -1, 1 },
-      {  { .avp_vendor = 10415, .avp_name = "Logical-Access-ID" }, RULE_OPTIONAL, -1, 1 },
-      {  { .avp_vendor = 10415, .avp_name = "Physical-Access-ID" }, RULE_OPTIONAL, -1, 1 }
+      {  { .avp_vendor = 13019, .avp_name = "Logical-Access-ID" }, RULE_OPTIONAL, -1, 1 },
+      {  { .avp_vendor = 13019, .avp_name = "Physical-Access-ID" }, RULE_OPTIONAL, -1, 1 }
     };
 
     CHECK_dict_search( DICT_COMMAND, CMD_BY_NAME, "Credit-Control-Request", &cmd);
@@ -11523,7 +11548,6 @@ static int dict_dcca_3gpp_entry(char * conffile)
     struct dict_object * cmd;
     struct local_rules_definition rules[] =
     {
-      {  {                      .avp_name = "Result-Code" }, RULE_OPTIONAL, -1, 1 },
       {  {                      .avp_name = "Experimental-Result" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "Supported-Features" }, RULE_OPTIONAL, -1, -1 },
       {  { .avp_vendor = 10415, .avp_name = "Bearer-Control-Mode" }, RULE_OPTIONAL, -1, 1 },
@@ -11531,7 +11555,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
       {  { .avp_vendor = 10415, .avp_name = "Event-Report-Indication" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "Charging-Rule-Remove" }, RULE_OPTIONAL, -1, -1 },
       {  { .avp_vendor = 10415, .avp_name = "Charging-Rule-Install" }, RULE_OPTIONAL, -1, -1 },
-      {  { .avp_vendor = 10415, .avp_name = "Charging-Rule-Information" }, RULE_OPTIONAL, -1, 1 },
+      {  { .avp_vendor = 10415, .avp_name = "Charging-Information" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "Online" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "Offline" }, RULE_OPTIONAL, -1, 1 },
       {  { .avp_vendor = 10415, .avp_name = "QoS-Information" }, RULE_OPTIONAL, -1, 1 },
@@ -11542,8 +11566,7 @@ static int dict_dcca_3gpp_entry(char * conffile)
       {  { .avp_vendor = 10415, .avp_name = "CSG-Information-Reporting" }, RULE_OPTIONAL, -1, -1 },
       {  { .avp_vendor = 10415, .avp_name = "User-CSG-Information" }, RULE_OPTIONAL, -1, 1 },
       {  {                      .avp_name = "Error-Message" }, RULE_OPTIONAL, -1, 1 },
-      {  {                      .avp_name = "Error-Reporting-Host" }, RULE_OPTIONAL, -1, 1 },
-      {  {                      .avp_name = "Failed-AVP" }, RULE_OPTIONAL, -1,-1 }
+      {  {                      .avp_name = "Error-Reporting-Host" }, RULE_OPTIONAL, -1, 1 }
     };
 
     CHECK_dict_search( DICT_COMMAND, CMD_BY_NAME, "Credit-Control-Answer", &cmd);

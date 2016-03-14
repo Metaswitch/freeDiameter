@@ -3169,7 +3169,7 @@ static int dnr_entry(char * conffile)
 						{ 	 {  "Session-Id", 			RULE_FIXED_HEAD, -1, 1 }
 						 	,{  "Auth-Application-Id", 		RULE_REQUIRED,   -1, 1 }
 						 	,{  "Auth-Request-Type", 		RULE_REQUIRED,   -1, 1 }
-						 	,{  "Result-Code", 			RULE_REQUIRED,   -1, 1 }
+						 	,{  "Result-Code", 			RULE_OPTIONAL,   -1, 1 }
 						 	,{  "Origin-Host", 			RULE_REQUIRED,   -1, 1 }
 							,{  "Origin-Realm",			RULE_REQUIRED,   -1, 1 }
 							,{  "User-Name",			RULE_OPTIONAL,   -1, 1 }
