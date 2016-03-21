@@ -2247,6 +2247,7 @@ int fd_msg_avp_new ( struct dict_object * model, int flags, struct avp ** avp );
  *
  * PARAMETERS:
  *  model 	: Pointer to a DICT_COMMAND dictionary object describing the message to create, or NULL.
+ *  dictappl 	: Pointer to a DICT_APPLICATION dictionary used to overload the application learned from the DICT_COMMAND object.
  *  flags	: combination of MSGFL_* flags.
  *  msg 	: Upon success, pointer to the new message is stored here.
  *
@@ -2260,6 +2261,7 @@ int fd_msg_avp_new ( struct dict_object * model, int flags, struct avp ** avp );
  *    ENOMEM 	: Memory allocation for the new message failed.)
  */
 int fd_msg_new ( struct dict_object * model, int flags, struct msg ** msg );
+int fd_msg_new_with_appl ( struct dict_object * model, struct dict_object * dictappl, int flags, struct msg ** msg );
 
 /*
  * FUNCTION:	msg_new_answer_from_req
