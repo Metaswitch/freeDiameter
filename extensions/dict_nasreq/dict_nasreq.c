@@ -3013,7 +3013,7 @@ static int dnr_entry(char * conffile)
 						 	,{  "Origin-Host", 			RULE_REQUIRED,   -1, 1 }
 							,{  "Origin-Realm",			RULE_REQUIRED,   -1, 1 }
 							,{  "Destination-Realm",		RULE_REQUIRED,   -1, 1 }
-						 	,{  "Auth-Request-Type", 		RULE_REQUIRED,   -1, 1 }
+						 	,{  "Auth-Request-Type", 		RULE_OPTIONAL,   -1, 1 }
 							,{  "Destination-Host",			RULE_OPTIONAL,   -1, 1 }
 							,{  "NAS-Identifier",			RULE_OPTIONAL,   -1, 1 }
 							,{  "NAS-IP-Address",			RULE_OPTIONAL,   -1, 1 }
