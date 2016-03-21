@@ -263,6 +263,11 @@ int fd_msg_avp_new ( struct dict_object * model, int flags, struct avp ** avp )
 /* Create a new message instance */
 int fd_msg_new ( struct dict_object * model, int flags, struct msg ** msg )
 {
+	return fd_msg_new_with_appl( model, NULL, flags, msg );
+}
+	
+int fd_msg_new_with_appl ( struct dict_object * model, struct dict_object * dictappl, int flags, struct msg ** msg )
+{
 	struct msg * new = NULL;
 	
 	TRACE_ENTRY("%p %x %p", model, flags, msg);
@@ -286,7 +291,6 @@ int fd_msg_new ( struct dict_object * model, int flags, struct msg ** msg )
 	if (model) {
 		struct dictionary 	*dict;
 		struct dict_cmd_data     dictdata;
-		struct dict_object     	*dictappl;
 		
 		CHECK_FCT( fd_dict_getdict(model, &dict) );
 		CHECK_FCT( fd_dict_getval(model, &dictdata)  );
@@ -296,7 +300,9 @@ int fd_msg_new ( struct dict_object * model, int flags, struct msg ** msg )
 		new->msg_public.msg_code	= dictdata.cmd_code;
 
 		/* Initialize application from the parent, if any */
-		CHECK_FCT(  fd_dict_search( dict, DICT_APPLICATION, APPLICATION_OF_COMMAND, model, &dictappl, 0)  );
+		if (dictappl == NULL) {
+			CHECK_FCT(  fd_dict_search( dict, DICT_APPLICATION, APPLICATION_OF_COMMAND, model, &dictappl, 0)  );
+		}
 		if (dictappl != NULL) {
 			struct dict_application_data appdata;
 			CHECK_FCT(  fd_dict_getval(dictappl, &appdata)  );
