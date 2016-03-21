@@ -1362,7 +1362,7 @@ static int dict_dcca_entry(char * conffile)
 		    { "Origin-Realm", RULE_REQUIRED, -1, 1 },
 		    { "Destination-Realm", RULE_REQUIRED, -1, 1 },
 		    { "Auth-Application-Id", RULE_REQUIRED, -1, 1 },
-		    { "Service-Context-Id", RULE_REQUIRED, -1, 1 },
+		    { "Service-Context-Id", RULE_OPTIONAL, -1, 1 },
 		    { "CC-Request-Type", RULE_REQUIRED, -1, 1 },
 		    { "CC-Request-Number", RULE_REQUIRED, -1, 1 },
 		    { "Destination-Host", RULE_OPTIONAL, -1, 1 },
