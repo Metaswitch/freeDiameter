@@ -300,7 +300,7 @@ int fd_msg_new_with_appl ( struct dict_object * model, struct dict_object * dict
 		new->msg_public.msg_code	= dictdata.cmd_code;
 
 		/* Initialize application from the parent, if any */
-		if (dictappl != NULL) {
+		if (dictappl == NULL) {
 			CHECK_FCT(  fd_dict_search( dict, DICT_APPLICATION, APPLICATION_OF_COMMAND, model, &dictappl, 0)  );
 		}
 		if (dictappl != NULL) {
