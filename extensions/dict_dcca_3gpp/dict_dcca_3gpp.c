@@ -180,6 +180,13 @@ static int dict_dcca_3gpp_entry(char * conffile)
                         struct dict_application_data app_data = { 16777238, "Gx" };
                         CHECK_FCT(fd_dict_new(fd_g_config->cnf_dict, DICT_APPLICATION, &app_data, vendor, NULL));
                 }
+
+                {
+                        struct dict_object * vendor;
+                        CHECK_FCT(fd_dict_search(fd_g_config->cnf_dict, DICT_VENDOR, VENDOR_BY_NAME, "3GPP", &vendor, ENOENT));
+                        struct dict_application_data app_data = { 16777217, "Sh" };
+                        CHECK_FCT(fd_dict_new(fd_g_config->cnf_dict, DICT_APPLICATION, &app_data, vendor, NULL));
+                }
 	}
 
 
@@ -11572,6 +11579,114 @@ static int dict_dcca_3gpp_entry(char * conffile)
     CHECK_dict_search( DICT_COMMAND, CMD_BY_NAME, "Credit-Control-Answer", &cmd);
     PARSE_loc_rules( rules, cmd );
   }
+
+    struct dict_object* app;
+    CHECK_FCT(fd_dict_search(fd_g_config->cnf_dict, DICT_APPLICATION, APPLICATION_BY_NAME, "Sh", &app, ENOENT));
+
+    /* User-Data-Request (UDR) Command */
+    {
+      struct dict_object* cmd_udr;
+      struct dict_cmd_data data = {
+        306,                                                    /* Code */
+        "3GPP/User-Data-Request",                               /* Name */
+        CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
+        CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE                   /* Fixed flag values */
+      };
+      struct local_rules_definition rules[] =
+      {
+        {  {                      .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 },
+        {  {                      .avp_name = "Vendor-Specific-Application-Id" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Auth-Session-State" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Destination-Host" }, RULE_OPTIONAL, -1, 1 },
+        {  {                      .avp_name = "Destination-Realm" }, RULE_REQUIRED, -1, 1 },
+        {  { .avp_vendor = 10415, .avp_name = "User-Identity" }, RULE_REQUIRED, -1, 1 },
+        {  { .avp_vendor = 10415, .avp_name = "Service-Indication" }, RULE_OPTIONAL, -1, -1 },
+        {  { .avp_vendor = 10415, .avp_name = "Data-Reference" }, RULE_REQUIRED, -1, 1 },
+      };
+
+      CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_udr);
+      PARSE_loc_rules(rules, cmd_udr);
+    }
+
+    /* User-Data-Answer (UDA) Command */
+    {
+      struct dict_object* cmd_uda;
+      struct dict_cmd_data data = {
+        306,                                                    /* Code */
+        "3GPP/User-Data-Answer",                                /* Name */
+        CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
+        CMD_FLAG_PROXIABLE                                      /* Fixed flag values */
+      };
+
+      struct local_rules_definition rules[] =
+      {
+        {  {                      .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 },
+        {  {                      .avp_name = "Vendor-Specific-Application-Id" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Result-Code" }, RULE_OPTIONAL, -1, 1 },
+        {  {                      .avp_name = "Experimental-Result" }, RULE_OPTIONAL, -1, 1 },
+        {  {                      .avp_name = "Auth-Session-State" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1 },
+        {  { .avp_vendor = 10415, .avp_name = "User-Data" }, RULE_OPTIONAL, -1, -1 }
+      };
+
+      CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_uda);
+      PARSE_loc_rules(rules, cmd_uda);
+    }
+
+    /* Profile-Update-Request (PUR) Command */
+    {
+      struct dict_object* cmd_pur;
+      struct dict_cmd_data data = {
+        307,                                                    /* Code */
+        "3GPP/Profile-Update-Request",                               /* Name */
+        CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
+        CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE                   /* Fixed flag values */
+      };
+      struct local_rules_definition rules[] =
+      {
+        {  {                      .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 },
+        {  {                      .avp_name = "Vendor-Specific-Application-Id" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Auth-Session-State" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Destination-Host" }, RULE_OPTIONAL, -1, 1 },
+        {  {                      .avp_name = "Destination-Realm" }, RULE_REQUIRED, -1, 1 },
+        {  { .avp_vendor = 10415, .avp_name = "User-Identity" }, RULE_REQUIRED, -1, 1 },
+        {  { .avp_vendor = 10415, .avp_name = "User-Data" }, RULE_OPTIONAL, -1, -1 },
+        {  { .avp_vendor = 10415, .avp_name = "Data-Reference" }, RULE_REQUIRED, -1, 1 },
+      };
+
+      CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_pur);
+      PARSE_loc_rules(rules, cmd_pur);
+    }
+
+    /* Profile-Update-Answer (PUA) Command */
+    {
+      struct dict_object* cmd_pua;
+      struct dict_cmd_data data = {
+        307,                                                    /* Code */
+        "3GPP/Profile-Update-Answer",                                /* Name */
+        CMD_FLAG_REQUEST | CMD_FLAG_PROXIABLE | CMD_FLAG_ERROR, /* Fixed flags */
+        CMD_FLAG_PROXIABLE                                      /* Fixed flag values */
+      };
+
+      struct local_rules_definition rules[] =
+      {
+        {  {                      .avp_name = "Session-Id" }, RULE_FIXED_HEAD, -1, 1 },
+        {  {                      .avp_name = "Vendor-Specific-Application-Id" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Result-Code" }, RULE_OPTIONAL, -1, 1 },
+        {  {                      .avp_name = "Experimental-Result" }, RULE_OPTIONAL, -1, 1 },
+        {  {                      .avp_name = "Auth-Session-State" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Origin-Host" }, RULE_REQUIRED, -1, 1 },
+        {  {                      .avp_name = "Origin-Realm" }, RULE_REQUIRED, -1, 1 }
+      };
+
+      CHECK_dict_new(DICT_COMMAND, &data, app, &cmd_pua);
+      PARSE_loc_rules(rules, cmd_pua);
+    }
 
   LOG_D( "Extension 'Dictionary definitions for DCCA 3GPP' initialized");
   return 0;
