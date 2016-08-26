@@ -158,8 +158,7 @@ int fd_peer_add ( struct peer_info * info, const char * orig_dbg, void (*cb)(str
 				/* If the existing peer is in zombie state then we can add it again, so
 				 * continue as if we hadn't found it */
 				li_inf = li;
-			}
-			else {
+			} else {
 				ret = EEXIST; /* we have a duplicate */
 				break;
 			}
