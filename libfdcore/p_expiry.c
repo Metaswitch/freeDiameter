@@ -138,7 +138,6 @@ static void * exp_th_fct(void * arg)
 	pthread_cleanup_pop( 1 );
 
 	TRACE_DEBUG(INFO, "An error occurred in peers module! Terminating process...");
-	CHECK_FCT_DO(fd_core_shutdown(), );
 	abort();
 	return NULL;
 }
