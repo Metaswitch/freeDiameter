@@ -131,14 +131,22 @@ static void * exp_th_fct(void * arg)
 		
 		/* Now, the first peer in the list is expired; signal it */
 		fd_list_unlink( &first->p_expiry );
-		CHECK_FCT_DO( fd_event_send(first->p_events, FDEVP_TERMINATE, 0, "DO_NOT_WANT_TO_TALK_TO_YOU"), break );
+
+		/* Previously if we failed this check, we would break (and abort the
+		 * process, below). However, we don't really want to ever do that - we think
+		 * we've failed this check due to a race condition
+		 * (https://github.com/Metaswitch/homestead/issues/399) when it wasn't
+		 * actually necessary to abort the program. If we are left with a broken
+		 * Diameter connection we'll catch that in our DiameterStack and restart the
+		 * process anyway. See the discussion on that issue for more info. */
+		CHECK_FCT_DO( fd_event_send(first->p_events, FDEVP_TERMINATE, 0, "DO_NOT_WANT_TO_TALK_TO_YOU"), /* break */ );
 		
 	} while (1);
 	
 	pthread_cleanup_pop( 1 );
 
-	TRACE_DEBUG(INFO, "An error occurred in peers module! Expiry thread is terminating...");
-	CHECK_FCT_DO(fd_core_shutdown(), );
+	TRACE_DEBUG(INFO, "An error occurred in peers module! Terminating process...");
+	abort();
 	return NULL;
 }
 
