@@ -45,10 +45,12 @@ static int fd_tcp_setsockopt(int family, int sk)
 {
 	int ret = 0;
 	int opt;
-	
-	/* Clear the NODELAY option in case it was set, as requested by rfc3539#section-3.2 */
-	/* Note that this is supposed to be the default, so we could probably remove this call ... */
-	opt = 0;
+
+	/* Set TCP_NODELAY, as we anticipate that there may be latency on our diameter
+	   connections, and we don't want to delay sending a TCP packet while waiting
+	   for an ACK that may take a long time (tens or hundreds of ms) to arrive.
+	*/
+	opt = 1;
 	ret = setsockopt(sk, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
 	if (ret != 0) {
 		ret = errno;
