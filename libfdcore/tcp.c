@@ -49,6 +49,12 @@ static int fd_tcp_setsockopt(int family, int sk)
 	/* Set TCP_NODELAY, as we anticipate that there may be latency on our diameter
 	   connections, and we don't want to delay sending a TCP packet while waiting
 	   for an ACK that may take a long time (tens or hundreds of ms) to arrive.
+
+	   Note that RFC 3539 section 3.2 says that Nagle's algoritm should be used,
+	   (i.e. TCP_NODELAY should be off) to avoid sending lots of small packets.
+	   However, we've decided to turn TCP_NODELAY on as we can't afford the
+	   latency hit that using it gives us if we don't get Diameter responses fast
+	   enough.
 	*/
 	opt = 1;
 	ret = setsockopt(sk, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt));
