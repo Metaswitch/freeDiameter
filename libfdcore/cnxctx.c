@@ -136,9 +136,10 @@ struct cnxctx * fd_cnx_serv_tcp(uint16_t port, int family, struct fd_endpoint * 
 
 	/* Generate the name for the connection object */
 	{
-		char addrbuf[INET6_ADDRSTRLEN];
+		char addrbuf[INET6_ADDRSTRLEN+2];
 		int  rc;
-		rc = getnameinfo(sa, sSAlen(sa), addrbuf, sizeof(addrbuf), NULL, 0, NI_NUMERICHOST);
+
+        rc = fd_addr_to_string(sa, addrbuf);
 		if (rc)
 			snprintf(addrbuf, sizeof(addrbuf), "[err:%s]", gai_strerror(rc));
 		snprintf(cnx->cc_id, sizeof(cnx->cc_id), CC_ID_HDR "TCP srv [%s]:%hu (%d)", addrbuf, port, cnx->cc_socket);
@@ -240,25 +241,21 @@ struct cnxctx * fd_cnx_serv_accept(struct cnxctx * serv)
 	
 	/* Generate the name for the connection object */
 	{
-		char addrbuf[INET6_ADDRSTRLEN];
-		char portbuf[10];
+		char addrbuf[INET6_ADDRSTRLEN+2];
 		int  rc;
-		
-		rc = getnameinfo((sSA *)&ss, ss_len, addrbuf, sizeof(addrbuf), portbuf, sizeof(portbuf), NI_NUMERICHOST | NI_NUMERICSERV);
+        rc = fd_addr_to_string((sSA *)&ss, addrbuf);
+
 		if (rc) {
 			snprintf(addrbuf, sizeof(addrbuf), "[err:%s]", gai_strerror(rc));
-			portbuf[0] = '\0';
 		}
 		
 		/* Numeric values for debug... */
-		snprintf(cli->cc_id, sizeof(cli->cc_id), CC_ID_HDR "%s from [%s]:%s (%d<-%d)", 
-				IPPROTO_NAME(cli->cc_proto), addrbuf, portbuf, serv->cc_socket, cli->cc_socket);
+		snprintf(cli->cc_id, sizeof(cli->cc_id), CC_ID_HDR "%s from [%s] (%d<-%d)", 
+				IPPROTO_NAME(cli->cc_proto), addrbuf, serv->cc_socket, cli->cc_socket);
 		
 		
 		/* ...Name for log messages */
-		rc = getnameinfo((sSA *)&ss, ss_len, cli->cc_remid, sizeof(cli->cc_remid), NULL, 0, 0);
-		if (rc)
-			snprintf(cli->cc_remid, sizeof(cli->cc_remid), "[err:%s]", gai_strerror(rc));
+		strncpy(cli->cc_remid, addrbuf, sizeof(cli->cc_remid));
 	}
 	
 	LOG_D("Incoming connection: '%s' <- '%s'   {%s}", fd_cnx_getid(serv), cli->cc_remid, cli->cc_id);
@@ -320,7 +317,7 @@ struct cnxctx * fd_cnx_cli_connect_tcp(sSA * sa /* contains the port already */,
 		snprintf(cnx->cc_id, sizeof(cnx->cc_id), CC_ID_HDR "TCP,#%d->%s", cnx->cc_socket, sa_buf);
 		
 		/* ...Name for log messages */
-		rc = getnameinfo(sa, addrlen, cnx->cc_remid, sizeof(cnx->cc_remid), NULL, 0, 0);
+		rc = fd_addr_to_string(sa, cnx->cc_remid);
 		if (rc)
 			snprintf(cnx->cc_remid, sizeof(cnx->cc_remid), "[err:%s]", gai_strerror(rc));
 	}
@@ -385,7 +382,7 @@ struct cnxctx * fd_cnx_cli_connect_sctp(int no_ip6, uint16_t port, struct fd_lis
 		snprintf(cnx->cc_id, sizeof(cnx->cc_id), CC_ID_HDR "SCTP,#%d->%s", cnx->cc_socket, sa_buf);
 		
 		/* ...Name for log messages */
-		rc = getnameinfo((sSA *)&primary, sSAlen(&primary), cnx->cc_remid, sizeof(cnx->cc_remid), NULL, 0, 0);
+		rc = fd_addr_to_string(&primary, cnx->cc_remid);
 		if (rc)
 			snprintf(cnx->cc_remid, sizeof(cnx->cc_remid), "[err:%s]", gai_strerror(rc));
 	}

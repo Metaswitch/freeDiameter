@@ -37,27 +37,16 @@
 
 DECLARE_FD_DUMP_PROTOTYPE(fd_sa_dump, sSA * sa, int flags) 
 {
-	char addrbuf[INET6_ADDRSTRLEN];
-	char servbuf[32];
+	char addrbuf[INET6_ADDRSTRLEN+2];
 	int rc;
 	FD_DUMP_HANDLE_OFFSET();
 	
-	servbuf[0] = 0;
-	
 	if (sa) {
-		if (sSAport(sa)) {
-			rc = getnameinfo(sa, sSAlen( sa ), addrbuf, sizeof(addrbuf), servbuf, sizeof(servbuf), flags);
-		} else {
-			rc = getnameinfo(sa, sSAlen( sa ), addrbuf, sizeof(addrbuf), NULL, 0, flags);
-		}
+        rc = fd_addr_to_string(sa, addrbuf);
 		if (rc) {
 			CHECK_MALLOC_DO( fd_dump_extend( FD_DUMP_STD_PARAMS, "%s", gai_strerror(rc)), return NULL);
 		} else {
-			if (servbuf[0]) {
-				CHECK_MALLOC_DO( fd_dump_extend( FD_DUMP_STD_PARAMS, "%s(%s)", &addrbuf[0], &servbuf[0]), return NULL);
-			} else {
-				CHECK_MALLOC_DO( fd_dump_extend( FD_DUMP_STD_PARAMS, "%s", &addrbuf[0]), return NULL);
-			}
+			CHECK_MALLOC_DO( fd_dump_extend( FD_DUMP_STD_PARAMS, "%s", &addrbuf[0]), return NULL);
 		}
 	} else {
 		CHECK_MALLOC_DO( fd_dump_extend( FD_DUMP_STD_PARAMS, "(NULL / ANY)"), return NULL);
@@ -67,18 +56,36 @@ DECLARE_FD_DUMP_PROTOTYPE(fd_sa_dump, sSA * sa, int flags)
 
 void fd_sa_sdump_numeric(char * buf /* must be at least sSA_DUMP_STRLEN */, sSA * sa)
 {
-	char addrbuf[INET6_ADDRSTRLEN];
-	char servbuf[32];
-	
+	char addrbuf[INET6_ADDRSTRLEN+2];
 	if (sa) {
-		int rc = getnameinfo(sa, sSAlen( sa ), addrbuf, sizeof(addrbuf), servbuf, sizeof(servbuf), NI_NUMERICHOST | NI_NUMERICSERV);
-		if (rc) {
+        int rc = fd_addr_to_string(sa, addrbuf);
+  		if (rc) {
 			snprintf(buf, sSA_DUMP_STRLEN, "%s", gai_strerror(rc));
 		} else {
-			snprintf(buf, sSA_DUMP_STRLEN, "%s(%s)", addrbuf, servbuf);
+			snprintf(buf, sSA_DUMP_STRLEN, "%s", addrbuf);
 		}
 	} else {
 		snprintf(buf, sSA_DUMP_STRLEN, "(NULL / ANY)");
 	}
 	
+}
+
+int  fd_addr_to_string(struct sockaddr *sa, char *buf) {
+        const char *addrstr;
+        int rc;
+
+		strcpy(buf, "[");
+		if (((struct sockaddr *)sa)->sa_family == AF_INET) {
+			struct sockaddr_in *s = (struct sockaddr_in *)sa;
+			addrstr = inet_ntop(AF_INET, &(s->sin_addr), &buf[1], INET6_ADDRSTRLEN);
+		} else {
+			struct sockaddr_in6 *s = (struct sockaddr_in6 *)sa;
+			addrstr = inet_ntop(AF_INET6, &(s->sin6_addr), &buf[1], INET6_ADDRSTRLEN);
+		}
+		if (addrstr == NULL)
+		{
+			rc = errno;
+		}
+		strcat(buf, "]");
+  	return rc;
 }
