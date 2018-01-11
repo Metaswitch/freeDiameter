@@ -185,8 +185,8 @@ int fd_peer_add ( struct peer_info * info, const char * orig_dbg, void (*cb)(str
 		char* peers_str = NULL;
 		size_t peers_str_len;
 		fd_peer_dump_list(&peers_str, &peers_str_len, NULL, 0);
-		TRACE_DEBUG(FULL, "Diameter peer %.*s added", (int)info->pi_diamidlen, info->pi_diamid);
-		TRACE_DEBUG(FULL, "New global list of peers:\n%.*s", (int)peers_str_len, peers_str);
+  	LOG_N("Diameter peer %.*s added", (int)info->pi_diamidlen, info->pi_diamid);
+		LOG_N("New global list of peers:\n%.*s", (int)peers_str_len, peers_str);
 		free(peers_str); peers_str = NULL;
 
 		CHECK_FCT( fd_psm_begin(p) );
@@ -198,7 +198,7 @@ int fd_peer_add ( struct peer_info * info, const char * orig_dbg, void (*cb)(str
 int fd_peer_remove ( DiamId_t diamid, size_t diamidlen )
 {
 	struct fd_list * li;
-	TRACE_DEBUG(FULL, "Remove diameter peer %.*s", (int)diamidlen, diamid);
+	LOG_N("Remove diameter peer %.*s", (int)diamidlen, diamid);
 	int found = 0;
 
 	// Find the peer in the peer list from its pi_diamid.
@@ -223,7 +223,11 @@ int fd_peer_remove ( DiamId_t diamid, size_t diamidlen )
 		TRACE_ERROR("Diameter peer %*s not valid - caller is out of sync", (int)diamidlen, diamid);
 	}
 
-	CHECK_POSIX( pthread_rwlock_unlock(&fd_g_peers_rw) );
+  char* peers_str = NULL;
+  size_t peers_str_len;
+  fd_peer_dump_list(&peers_str, &peers_str_len, NULL, 0);
+  LOG_N("New global list of peers:\n%.*s", (int)peers_str_len, peers_str);
+  CHECK_POSIX( pthread_rwlock_unlock(&fd_g_peers_rw) );
 
 	return 0;
 }
