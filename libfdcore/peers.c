@@ -223,11 +223,11 @@ int fd_peer_remove ( DiamId_t diamid, size_t diamidlen )
 		TRACE_ERROR("Diameter peer %*s not valid - caller is out of sync", (int)diamidlen, diamid);
 	}
 
+  CHECK_POSIX( pthread_rwlock_unlock(&fd_g_peers_rw) );
   char* peers_str = NULL;
   size_t peers_str_len;
   fd_peer_dump_list(&peers_str, &peers_str_len, NULL, 0);
   LOG_N("New global list of peers:\n%.*s", (int)peers_str_len, peers_str);
-  CHECK_POSIX( pthread_rwlock_unlock(&fd_g_peers_rw) );
 
 	return 0;
 }
