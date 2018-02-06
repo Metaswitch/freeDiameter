@@ -39,7 +39,7 @@
 #define _CNXCTX_H
 
 /* Maximum time we allow a connection to be blocked because of head-of-the-line buffers. After this delay, connection is considered in error. */
-#define MAX_HOTL_BLOCKING_TIME	1000	/* ms */
+#define MAX_HOTL_BLOCKING_TIME	400	/* ms */
 
 /* The connection context structure */
 struct cnxctx {
